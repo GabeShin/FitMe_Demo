@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">FitMe_Demo</string>
+
+    <!--Strings Used for Log-in-->
+    <string name="facebook_app_id">1259685300782841</string>
+    <string name="kakao_app_key">5c766b4082d1e44cf47e78bcf3d0246e</string>
+
+    <!--Strings Used In Menu-->
+    <string name="action_logout">Logout</string>
+</resources>

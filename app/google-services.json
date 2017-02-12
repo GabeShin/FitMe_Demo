@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "179172931664",
+    "firebase_url": "https://fitme-fe04c.firebaseio.com",
+    "project_id": "fitme-fe04c",
+    "storage_bucket": "fitme-fe04c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179172931664:android:2a365bb2fb20d161",
+        "android_client_info": {
+          "package_name": "gabe.zabi.fitme_demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179172931664-52rct1shqe26a6l30g8imuhthkjr8vkg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmh-uKjqMSO7q4zGsCaiCcntTLBw5UHiE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179172931664-52rct1shqe26a6l30g8imuhthkjr8vkg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
