@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/report_activity_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--This Imageview will be inflated with profile picture of the user-->
+            <ImageView
+                android:id="@+id/appbar_profile_picture"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginStart="50dp"
+                android:scaleType="centerCrop"
+                android:fitsSystemWindows="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/darker_gray"/>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/report_activity_tool_bar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"/>
+        </RelativeLayout>
+    </android.support.design.widget.AppBarLayout>
+
+</LinearLayout>

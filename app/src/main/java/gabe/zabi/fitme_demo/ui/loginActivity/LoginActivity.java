@@ -296,8 +296,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 Map<String, String> map = userProfile.getProperties();
 
-                Log.v(LOG_TAG, "Properties are: " + map.toString());
-
                 saveUser(Constants.KEY_VALUE_KAKAO_PROVIDER);
 
                 /* create uid using encodedEmail and provider.

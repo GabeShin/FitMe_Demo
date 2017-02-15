@@ -75,12 +75,13 @@ public class User {
     }
 
     public void saveUser() {
-        Firebase userRef = new Firebase(Constants.FIREBASE_URL_USER);
+        String createdUid = Utils.getEncodedEmail(email) + "%20" + provider;
+        Firebase userRef = new Firebase(Constants.FIREBASE_URL_USER).child(createdUid).child(Constants.FIREBASE_LOCATION_ACCOUNT_INFO);
 
         if (getProvider() == Constants.KEY_VALUE_KAKAO_PROVIDER){
-            userRef.child(getId()).setValue(this);
+            userRef.setValue(this);
         } else {
-            userRef.child(Utils.getEncodedEmail(email) + "%20" + provider).setValue(this);
+            userRef.setValue(this);
         }
     }
 }

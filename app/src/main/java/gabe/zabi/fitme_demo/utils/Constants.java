@@ -8,6 +8,8 @@ public class Constants {
 
 
     public static final String FIREBASE_LOCATION_USER = "user";
+    public static final String FIREBASE_LOCATION_ACCOUNT_INFO = "account_information";
+    public static final String FIREBASE_LOCATION_PROFILE_INFO = "profile_information";
 
     public static final String FIREBASE_URL = "https://fitme-fe04c.firebaseio.com/";
     public static final String FIREBASE_URL_USER = FIREBASE_URL + "/" + FIREBASE_LOCATION_USER;
@@ -21,7 +23,6 @@ public class Constants {
     public static final String KEY_VALUE_GOOGLE_PROVIDER = "google";
     public static final String KEY_VALUE_FACEBOOK_PROVIDER = "facebook";
     public static final String KEY_VALUE_KAKAO_PROVIDER = "kakao";
-
 
     /**
      * Constants for Firebase Log In

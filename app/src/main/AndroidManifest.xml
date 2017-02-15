@@ -31,5 +31,19 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.myPlanActivity.MyPlanActivity"
+            android:parentActivityName=".ui.mainActivity.MainActivity">
+
+        </activity>
+
+        <activity android:name=".ui.myPlanActivity.SearchPlanActivity"
+            android:parentActivityName=".ui.myPlanActivity.MyPlanActivity"/>
+
+        <activity android:name=".ui.myReportActivity.MyReportActivity"
+            android:parentActivityName=".ui.mainActivity.MainActivity"/>
+
+        <activity android:name=".ui.mainActivity.ProfileSettingActivity"
+            android:parentActivityName=".ui.mainActivity.MainActivity"/>
+
     </application>
 </manifest>

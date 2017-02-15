@@ -7,4 +7,36 @@
 
     <!--Strings Used In Menu-->
     <string name="action_logout">Logout</string>
+
+    <!--Error Messages-->
+    <string name="log_error_the_read_failed">Read Failed</string>
+
+    <!--Strings Used for MainActivity Layout-->
+    <string name="my_plan">My Plan</string>
+    <string name="my_report_card">My Report</string>
+
+    <!--Strings Used for PlanActivity Layout-->
+    <string name="add_a_plan">Add a Plan</string>
+
+    <!--Strings for Exercise Level-->
+    <string-array name="exercise_experience">
+        <item>@string/exercise_experience_beginner</item>
+        <item>@string/exercise_experience_intermediate</item>
+        <item>@string/exercise_experience_advanced</item>
+    </string-array>
+
+    <string name="exercise_experience_beginner">Beginner</string>
+    <string name="exercise_experience_intermediate">Intermediate</string>
+    <string name="exercise_experience_advanced">Advanced</string>
+
+    <!--Strings for Exercise Goal-->
+    <string-array name="exercise_goal">
+        <item>@string/exercise_goal_weight_loss</item>
+        <item>@string/exercise_goal_weight_gain</item>
+        <item>@string/exercise_goal_tone_body</item>
+    </string-array>
+
+    <string name="exercise_goal_weight_loss">Weight Loss</string>
+    <string name="exercise_goal_weight_gain">Weight Gain</string>
+    <string name="exercise_goal_tone_body">Tone Body</string>
 </resources>
