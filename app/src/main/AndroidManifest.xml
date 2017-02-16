@@ -13,6 +13,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        
+        <provider
+            android:authorities="gabe.zabi.fitme_demo"
+            android:name=".data.MyProvider"/>
 
         <meta-data android:name= "com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />

@@ -1,5 +1,6 @@
 package gabe.zabi.fitme_demo.ui.loginActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -46,6 +47,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import gabe.zabi.fitme_demo.R;
+import gabe.zabi.fitme_demo.data.MyContract;
 import gabe.zabi.fitme_demo.model.User;
 import gabe.zabi.fitme_demo.ui.mainActivity.MainActivity;
 import gabe.zabi.fitme_demo.utils.Constants;
@@ -179,7 +181,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         email = firebaseUser.getEmail();
                         imagePath = firebaseUser.getPhotoUrl().toString();
 
-                        saveUser(Constants.KEY_VALUE_FACEBOOK_PROVIDER);
+                        saveUserToFirebase(Constants.KEY_VALUE_FACEBOOK_PROVIDER);
 
                         /* create uid using encodedEmail and provider.
                          * and save it as SharedPreferenceUid.
@@ -219,7 +221,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         email = account.getEmail();
         imagePath = account.getPhotoUrl().toString();
 
-        saveUser(Constants.KEY_VALUE_GOOGLE_PROVIDER);
+        saveUserToFirebase(Constants.KEY_VALUE_GOOGLE_PROVIDER);
 
         /* create uid using encodedEmail and provider.
          * and save it as SharedPreferenceUid.
@@ -296,7 +298,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 Map<String, String> map = userProfile.getProperties();
 
-                saveUser(Constants.KEY_VALUE_KAKAO_PROVIDER);
+                saveUserToFirebase(Constants.KEY_VALUE_KAKAO_PROVIDER);
 
                 /* create uid using encodedEmail and provider.
                  * and save it as SharedPreferenceUid.
@@ -412,7 +414,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void saveUser(String provider){
+    private void saveUserToFirebase(String provider){
         user = new User();
 
         user.setId(uid);

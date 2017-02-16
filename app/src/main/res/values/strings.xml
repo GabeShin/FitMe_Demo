@@ -39,4 +39,24 @@
     <string name="exercise_goal_weight_loss">Weight Loss</string>
     <string name="exercise_goal_weight_gain">Weight Gain</string>
     <string name="exercise_goal_tone_body">Tone Body</string>
+
+    <string name="profile_hint_email">Your Email</string>
+    <string name="profile_hint_name">Your Name</string>
+    <string name="profile_hint_gender">Your Gender</string>
+    <string name="profile_hint_phone">Your Phone Number</string>
+    <string name="profile_hint_birthday">Your Birthday</string>
+
+    <string name="profile_hint_goal">Choose Your Fitness Goal</string>
+    <string name="profile_hint_nickname">Your Nickname</string>
+    <string name="profile_hint_height">Your Height</string>
+    <string name="profile_hint_weight">Your Weight</string>
+    <string name="profile_hint_experience">Select Your Experience</string>
+    <string name="profile_hint_question_1">0</string>
+    <string name="profile_hint_question_2">ex. 4 eggs and half an apple</string>
+    <string name="profile_hint_question_3">ex. sandwich place near work</string>
+    <string name="profile_hint_question_4">ex. chicken breast and salad, potato</string>
+    <string name="profile_hint_question_5">2</string>
+    <string name="profile_hint_question_6">2</string>
+    <string name="profile_hint_question_special">ex. are you pregnant? do you suffer from any chronicle diseases? are you regularly feeling pain in your body?</string>
+
 </resources>
