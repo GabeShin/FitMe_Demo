@@ -17,6 +17,8 @@ public class Constants {
     /**
      * Constants for SharedPreference Keys
      */
+    public static String KEY_APP_INITIATED = "FIRST_TIME_USER";
+
     public static String KEY_CREATED_UID = "CREATED_UID_KEY";
 
     public static String KEY_PROVIDER = "PROVIDER_KEY";
