@@ -53,6 +53,8 @@ public abstract class BaseActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         /**
          * Getting mProvider and mCreatedUid from SharedPreference
          */

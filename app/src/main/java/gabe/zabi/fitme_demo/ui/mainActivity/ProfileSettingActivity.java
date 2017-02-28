@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -17,16 +16,23 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import gabe.zabi.fitme_demo.R;
 import gabe.zabi.fitme_demo.data.MyContract;
 import gabe.zabi.fitme_demo.model.UserProfile;
 import gabe.zabi.fitme_demo.ui.BaseActivity;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import gabe.zabi.fitme_demo.utils.CircleTransform;
+import gabe.zabi.fitme_demo.utils.Constants;
 
 /**
  * Created by Gabe on 2017-02-14.
@@ -37,6 +43,10 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
     private final String LOG_TAG = ProfileSettingActivity.class.getSimpleName();
 
     private String mProfileImage;
+    private String mName;
+    private String mEmail;
+    private int mGender;
+    private String mBirthday;
     private int mGoal;
     private String mNickname;
     private String mHeight;
@@ -52,6 +62,10 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
 
     private UserProfile mUserProfile;
 
+    private TextView mTextViewName;
+    private TextView mTextViewBirthday;
+    private TextView mTextViewGender;
+    private TextView mTextViewEmail;
     private ImageView mImageViewProfileImage;
     private Spinner mSpinnerGoal;
     private EditText mEditTextNickname;
@@ -66,7 +80,7 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
     private EditText mEditTextQ6;
     private EditText mEditTextSpecialQ;
 
-    private Toolbar mToolbar;
+    private Firebase mRef;
 
     private Uri mProfileUri;
     private static final int PROFILE_LOADER = 100;
@@ -75,6 +89,23 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_setting);
+
+        mRef = new Firebase(Constants.FIREBASE_URL_USER).child(mCreatedUid).child(Constants.FIREBASE_LOCATION_PROFILE_INFO);
+
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
+                if (userProfile != null) mUserProfile = userProfile;
+                else finish();
+
+                addToContentProvider(mUserProfile);
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e(LOG_TAG, getString(R.string.log_error_the_read_failed) + firebaseError.getMessage());
+            }
+        });
 
         // set user database uri
         mProfileUri = MyContract.UserEntry.CONTENT_URI;
@@ -94,14 +125,17 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
         switch (item.getItemId()){
             case R.id.action_save_profile:
                 getAllProfileDataFromApp();
-                saveUserProfileToFirebase();
-                insertOrUpdateUserProfileFromFirebaseToContentProvider();
+                updateUserProfileToFirebase();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void initializeScreen(){
+    private void initializeScreen(){
+        mTextViewName = (TextView) findViewById(R.id.profile_activity_name);
+        mTextViewBirthday = (TextView) findViewById(R.id.profile_activity_birthday);
+        mTextViewGender = (TextView) findViewById(R.id.profile_activity_gender);
+        mTextViewEmail = (TextView) findViewById(R.id.profile_activity_email);
         mImageViewProfileImage = (ImageView) findViewById(R.id.profile_activity_profile_picture);
         mSpinnerGoal = (Spinner) findViewById(R.id.spinner_goal);
         mEditTextNickname = (EditText) findViewById(R.id.et_nickname);
@@ -116,9 +150,29 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
         mEditTextQ6 = (EditText) findViewById(R.id.et_question_6);
         mEditTextSpecialQ = (EditText) findViewById(R.id.et_special_info);
 
-        mToolbar = (Toolbar) findViewById(R.id.profile_activity_tool_bar);
-        ProfileSettingActivity.this.setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    private void populateViews(UserProfile userProfile){
+        mTextViewName.setText(userProfile.getName());
+        mTextViewBirthday.setText(userProfile.getBirthday());
+        mTextViewEmail.setText(userProfile.getEmail());
+
+        if (userProfile.getGender() == 0) mTextViewGender.setText("Male");
+        else mTextViewGender.setText("Female");
+
+        mSpinnerGoal.setSelection(userProfile.getGoal());
+        mEditTextNickname.setText(userProfile.getNickname());
+        mEditTextHeight.setText(userProfile.getHeight());
+        mEditTextWeight.setText(userProfile.getWeight());
+        mSpinnerExperience.setSelection(userProfile.getExperience());
+        mEditTextQ1.setText(userProfile.getQuestion1());
+        mEditTextQ2.setText(userProfile.getQuestion2());
+        mEditTextQ3.setText(userProfile.getQuestion3());
+        mEditTextQ4.setText(userProfile.getQuestion4());
+        mEditTextQ5.setText(userProfile.getQuestion5());
+        mEditTextQ6.setText(userProfile.getQuestion6());
+        mEditTextSpecialQ.setText(userProfile.getSpecialQuestion());
     }
 
     public void getAllProfileDataFromApp(){
@@ -136,32 +190,27 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
         mSpecialQuestion = mEditTextSpecialQ.getText().toString();
     }
 
-    public void saveUserProfileToFirebase(){
-        mUserProfile = new UserProfile();
+    public void updateUserProfileToFirebase(){
 
-//        mUserProfile.setName();
-//        mUserProfile.setEmail();
-//        mUserProfile.setBirthday();
-//        mUserProfile.setGender();
-//        mUserProfile.setProfileImage();
+        Map<String, Object> map = new HashMap<>();
+        map.put("question1", mQuestion1);
+        map.put("question2", mQuestion2);
+        map.put("question3", mQuestion3);
+        map.put("question4", mQuestion4);
+        map.put("question5", mQuestion5);
+        map.put("question6", mQuestion6);
+        map.put("specialQuestion", mSpecialQuestion);
 
-        mUserProfile.setExperience(mExperience);
-        mUserProfile.setGoal(mGoal);
-        mUserProfile.setHeight(mHeight);
-        mUserProfile.setWeight(mWeight);
-        mUserProfile.setNickname(mNickname);
-        mUserProfile.setQuestion1(mQuestion1);
-        mUserProfile.setQuestion2(mQuestion2);
-        mUserProfile.setQuestion3(mQuestion3);
-        mUserProfile.setQuestion4(mQuestion4);
-        mUserProfile.setQuestion5(mQuestion5);
-        mUserProfile.setQuestion6(mQuestion6);
-        mUserProfile.setSpecialQuestion(mSpecialQuestion);
+        map.put("goal", mGoal);
+        map.put("height", mHeight);
+        map.put("weight", mWeight);
+        map.put("nickname", mNickname);
+        map.put("experience", mExperience);
 
-        mUserProfile.saveUser(mCreatedUid);
+        mRef.updateChildren(map);
     }
 
-    private void insertOrUpdateUserProfileFromFirebaseToContentProvider(){
+    private void addToContentProvider(UserProfile userProfile){
 
         String selection = MyContract.UserEntry.COLUMN_FITME_UID + "=?";
         String[] selectionArg = {mCreatedUid};
@@ -171,18 +220,25 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
         Log.v(LOG_TAG, "Nickname input is... " + mNickname);
 
         cv.put(MyContract.UserEntry.COLUMN_FITME_UID, mCreatedUid);
-        cv.put(MyContract.UserEntry.COLUMN_EXPERIENCE, mExperience);
-        cv.put(MyContract.UserEntry.COLUMN_GOAL, mGoal);
-        cv.put(MyContract.UserEntry.COLUMN_HEIGHT, mHeight);
-        cv.put(MyContract.UserEntry.COLUMN_WEIGHT, mWeight);
-        cv.put(MyContract.UserEntry.COLUMN_NICKNAME, mNickname);
-        cv.put(MyContract.UserEntry.COLUMN_QUESTION_ONE, mQuestion1);
-        cv.put(MyContract.UserEntry.COLUMN_QUESTION_TWO, mQuestion2);
-        cv.put(MyContract.UserEntry.COLUMN_QUESTION_THREE, mQuestion3);
-        cv.put(MyContract.UserEntry.COLUMN_QUESTION_FOUR, mQuestion4);
-        cv.put(MyContract.UserEntry.COLUMN_QUESTION_FIVE, mQuestion5);
-        cv.put(MyContract.UserEntry.COLUMN_QUESTION_SIX, mQuestion6);
-        cv.put(MyContract.UserEntry.COLUMN_QUESTION_SPECIAL, mSpecialQuestion);
+
+        cv.put(MyContract.UserEntry.COLUMN_NAME, userProfile.getName());
+        cv.put(MyContract.UserEntry.COLUMN_GENDER, userProfile.getGender());
+        cv.put(MyContract.UserEntry.COLUMN_BIRTHDAY, userProfile.getBirthday());
+        cv.put(MyContract.UserEntry.COLUMN_EMAIL, userProfile.getEmail());
+        cv.put(MyContract.UserEntry.COLUMN_PROFILE_IMAGE, userProfile.getProfileImage());
+
+        cv.put(MyContract.UserEntry.COLUMN_EXPERIENCE, userProfile.getExperience());
+        cv.put(MyContract.UserEntry.COLUMN_GOAL, userProfile.getGoal());
+        cv.put(MyContract.UserEntry.COLUMN_HEIGHT, userProfile.getHeight());
+        cv.put(MyContract.UserEntry.COLUMN_WEIGHT, userProfile.getWeight());
+        cv.put(MyContract.UserEntry.COLUMN_NICKNAME, userProfile.getNickname());
+        cv.put(MyContract.UserEntry.COLUMN_QUESTION_ONE, userProfile.getQuestion1());
+        cv.put(MyContract.UserEntry.COLUMN_QUESTION_TWO, userProfile.getQuestion2());
+        cv.put(MyContract.UserEntry.COLUMN_QUESTION_THREE, userProfile.getQuestion3());
+        cv.put(MyContract.UserEntry.COLUMN_QUESTION_FOUR, userProfile.getQuestion4());
+        cv.put(MyContract.UserEntry.COLUMN_QUESTION_FIVE, userProfile.getQuestion5());
+        cv.put(MyContract.UserEntry.COLUMN_QUESTION_SIX, userProfile.getQuestion6());
+        cv.put(MyContract.UserEntry.COLUMN_QUESTION_SPECIAL, userProfile.getSpecialQuestion());
 
         Cursor cursor = getContentResolver().query(MyContract.UserEntry.CONTENT_URI, null, selection, selectionArg, null);
 
@@ -210,6 +266,13 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()){
             // retrieve user profile data from the database...
+
+            mName = data.getString(data.getColumnIndexOrThrow(MyContract.UserEntry.COLUMN_NAME));
+            mBirthday = data.getString(data.getColumnIndexOrThrow(MyContract.UserEntry.COLUMN_BIRTHDAY));
+            mEmail = data.getString(data.getColumnIndexOrThrow(MyContract.UserEntry.COLUMN_EMAIL));
+            mGender = data.getInt(data.getColumnIndexOrThrow(MyContract.UserEntry.COLUMN_GENDER));
+            mProfileImage = data.getString(data.getColumnIndexOrThrow(MyContract.UserEntry.COLUMN_PROFILE_IMAGE));
+
             mGoal = data.getInt(data.getColumnIndexOrThrow(MyContract.UserEntry.COLUMN_GOAL));
             mNickname = data.getString(data.getColumnIndexOrThrow(MyContract.UserEntry.COLUMN_NICKNAME));
             mHeight = data.getString(data.getColumnIndexOrThrow(MyContract.UserEntry.COLUMN_HEIGHT));
@@ -226,7 +289,19 @@ public class ProfileSettingActivity extends BaseActivity implements LoaderManage
         }
 
         // populate views with loaded values
-        mSpinnerGoal.setSelection(mGoal, true);
+        mTextViewName.setText(mName);
+        mTextViewBirthday.setText(mBirthday);
+        mTextViewEmail.setText(mEmail);
+        if (mGender == 0) mTextViewGender.setText("Male");
+        else mTextViewGender.setText("Female");
+
+        Picasso.with(getApplicationContext())
+                .load(mProfileImage)
+                .placeholder(R.drawable.ic_account_circle_white_24dp)
+                .transform(new CircleTransform())
+                .into(mImageViewProfileImage);
+
+        mSpinnerGoal.setSelection(mGoal);
         mEditTextNickname.setText(mNickname);
         mEditTextHeight.setText(mHeight);
         mEditTextWeight.setText(mWeight);

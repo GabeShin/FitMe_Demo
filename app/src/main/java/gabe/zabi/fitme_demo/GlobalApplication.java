@@ -2,14 +2,9 @@ package gabe.zabi.fitme_demo;
 
 import android.app.Activity;
 import android.app.Application;
-import android.util.Log;
 
 import com.firebase.client.Firebase;
-import com.kakao.auth.AuthType;
-import com.kakao.auth.KakaoSDK;
-import com.kakao.auth.Session;
-
-import gabe.zabi.fitme_demo.ui.loginActivity.KakaoSDKAdapter;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by Gabe on 2017-01-31.
@@ -24,10 +19,8 @@ public class GlobalApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Firebase.setAndroidContext(this);
-
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
         mInstance = this;
-
-        KakaoSDK.init(new KakaoSDKAdapter());
     }
 
     public static Activity getCurrentActivity() {

@@ -40,14 +40,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.kakao.auth.AuthType;
-import com.kakao.auth.ISessionCallback;
-import com.kakao.auth.Session;
-import com.kakao.network.ErrorResult;
-import com.kakao.usermgmt.UserManagement;
-import com.kakao.usermgmt.callback.MeResponseCallback;
-import com.kakao.usermgmt.response.model.UserProfile;
-import com.kakao.util.exception.KakaoException;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -70,8 +62,6 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
     private LoginManager mLoginManager;
 
     private GoogleApiClient mGoogleApiClient;
-
-    private SessionCallback mKakaoCallback;
 
     public User user;
     String uid = null;
@@ -102,7 +92,6 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
         // set OnClickListeners
         rootView.findViewById(R.id.fb_login_button).setOnClickListener(this);
         rootView.findViewById(R.id.google_login_button).setOnClickListener(this);
-        rootView.findViewById(R.id.kakao_login_button).setOnClickListener(this);
 
         /*
         Setup the Google API object to allow Google login
@@ -139,9 +128,6 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
                 break;
             case R.id.google_login_button:
                 onGoogleLogInClicked();
-                break;
-            case R.id.kakao_login_button:
-                onKakaoLogInClicked();
                 break;
         }
     }
@@ -219,7 +205,6 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
         user.setId(uid);
         user.setName(name);
         user.setEmail(email);
-        user.setProfilePicturePath(imagePath);
         user.setProvider(provider);
 
         user.saveUser();
@@ -320,75 +305,6 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
     }
 
     /**
-     * Kakao Log In Methods
-     */
-    private void onKakaoLogInClicked(){
-        // 헤쉬키를 가져온다
-        getAppKeyHash();
-
-        Log.d(LOG_TAG, "Kakao Log In is Clicked");
-        // Create KakaoCallback
-        mKakaoCallback = new SessionCallback();
-        Session.getCurrentSession().addCallback(mKakaoCallback);
-        Session.getCurrentSession().checkAndImplicitOpen();
-        Session.getCurrentSession().open(AuthType.KAKAO_TALK_EXCLUDE_NATIVE_LOGIN, getActivity());
-    }
-
-    private class SessionCallback implements ISessionCallback {
-        @Override
-        public void onSessionOpened() {
-            Log.d(LOG_TAG, "Session is open");
-            // Bring user data, if not registered, automatically signs up.
-            kakaoRequestMe();
-        }
-
-        @Override
-        public void onSessionOpenFailed(KakaoException exception) {
-            if(exception != null) {
-                Log.d(LOG_TAG, exception.getMessage());
-            }
-        }
-    }
-
-    protected void kakaoRequestMe() {
-        Log.d(LOG_TAG, "at KakaoRequestMe");
-        UserManagement.requestMe(new MeResponseCallback() {
-            @Override
-            public void onFailure(ErrorResult errorResult) {
-                int ErrorCode = errorResult.getErrorCode();
-                int ClientErrorCode = -777;
-
-                if (ErrorCode == ClientErrorCode) {
-                    Toast.makeText(getApplicationContext(), "카카오톡 서버의 네트워크가 불안정합니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.d(LOG_TAG , "오류로 카카오로그인 실패 ");
-                }
-            }
-
-            @Override
-            public void onSessionClosed(ErrorResult errorResult) {
-                Log.d(LOG_TAG , "오류로 카카오로그인 실패 ");
-            }
-
-            @Override
-            public void onSuccess(UserProfile userProfile) {
-                Log.d(LOG_TAG , "Kakao Login onSuccess! ");
-
-                imagePath = userProfile.getProfileImagePath();
-                uid = String.valueOf(userProfile.getId());
-                name = userProfile.getNickname();
-                provider = Constants.KEY_VALUE_KAKAO_PROVIDER;
-            }
-
-            @Override
-            public void onNotSignedUp() {
-                // 자동가입이 아닐경우 동의창
-            }
-        });
-    }
-
-
-    /**
      * @param requestCode
      * @param resultCode
      * @param data
@@ -425,23 +341,24 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
                     // the user is a returning user
                     Log.v(LOG_TAG, "User is returning user");
                     Utils.saveSharedPreferenceUid(getApplicationContext(), encodedUid);
-//                    startActivity(new Intent(getActivity(), MainActivity.class));
-
-                    ////// REPLACE THIS ///////
-                    Fragment fragment = new LoginUserInfo1Fragment();
-                    android.support.v4.app.FragmentManager fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.login_container, fragment).commit();
-
-                    communicator.sendUserInfo(name);
+                    startActivity(new Intent(getActivity(), MainActivity.class));
                 } else {
                     // data does not yet exist
                     // the user is a new user.
                     Log.v(LOG_TAG, "User is new user");
+                    Utils.saveSharedPreferenceUid(getApplicationContext(), encodedUid);
 
                     saveUserToFirebase();
 
-                    Utils.saveSharedPreferenceUid(getApplicationContext(), encodedUid);
-                    startActivity(new Intent(getActivity(), MainActivity.class));
+                    Fragment fragment = new LoginUserInfo1Fragment();
+                    User user = new User();
+                    user.setEmail(email);
+                    user.setName(name);
+
+                    communicator.sendUserInfo(fragment, name, email, imagePath);
+
+                    android.support.v4.app.FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.login_container, fragment).commit();
                 }
             }
 
@@ -453,7 +370,7 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
     }
 
     public interface Communicator{
-        public void sendUserInfo(String userInfo);
+        public void sendUserInfo(Fragment fragment, String name, String email, String imagePath);
     }
 
     @Override

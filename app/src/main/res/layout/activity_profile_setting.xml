@@ -61,6 +61,7 @@
                     style="@style/gridlayout_left_elements"
                     android:text="Name"/>
                 <TextView
+                    android:id="@+id/profile_activity_name"
                     style="@style/gridlayout_right_elements"
                     android:hint="@string/profile_hint_name"/>
                 <View style="@style/gridlayout_spaces" />
@@ -69,6 +70,7 @@
                     style="@style/gridlayout_left_elements"
                     android:text="Birthday"/>
                 <TextView
+                    android:id="@+id/profile_activity_birthday"
                     style="@style/gridlayout_right_elements"
                     android:hint="@string/profile_hint_birthday"/>
                 <View style="@style/gridlayout_spaces" />
@@ -77,6 +79,7 @@
                     style="@style/gridlayout_left_elements"
                     android:text="Gender"/>
                 <TextView
+                    android:id="@+id/profile_activity_gender"
                     style="@style/gridlayout_right_elements"
                     android:hint="@string/profile_hint_gender"/>
                 <View style="@style/gridlayout_spaces" />
@@ -125,6 +128,7 @@
                     style="@style/gridlayout_left_elements"
                     android:text="Email"/>
                 <TextView
+                    android:id="@+id/profile_activity_email"
                     style="@style/gridlayout_right_elements"
                     android:hint="@string/profile_hint_email"/>
                 <View style="@style/gridlayout_spaces" />

@@ -21,13 +21,4 @@
         android:layout_gravity="center_horizontal"
         android:layout_margin="15dp" />
 
-    <Button
-        android:id="@+id/kakao_login_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Log in with Kakao"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="15dp" />
-
-
 </LinearLayout>

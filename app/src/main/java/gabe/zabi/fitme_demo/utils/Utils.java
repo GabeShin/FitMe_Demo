@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.util.Calendar;
+
 /**
  * Created by Gabe on 2017-01-31.
  */
@@ -63,7 +67,42 @@ public class Utils {
         editor.commit();
     }
 
+    /**
+     * Methods for troll-checking user inputs.
+     */
 
+    public static boolean validateUserBirthday(int birthday){
+        // returns true if user input is valid
 
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        if (birthday >= currentYear || birthday <= currentYear - 100){
+            // birthday cannot be bigger than the current year
+            // birthday cannot be smaller than (current year - 100)
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean validateHeight(int height){
+        // returns true if user input is valid
+        // height cannot be smaller than 90cm
+        // height cannot be bigger than 250cm
+        if (height < 90 || height > 250){
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean validateWeight(int weight){
+        // returns true if user input is valid
+        // weight cannot be smaller than 20kg
+        // weight cannot be bigger than 400kg
+        if (weight < 20 || weight > 400){
+            return false;
+        }
+        return true;
+    }
 
 }

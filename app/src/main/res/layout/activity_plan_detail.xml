@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/choose_workout_bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onPlanButtonClicked"
+        android:text="Do This Workout"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/plan_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/circle_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_above="@id/choose_workout_bottom"
+        app:ci_drawable="@drawable/selected_dot"
+        app:ci_drawable_unselected="@drawable/default_dot"/>
+
+</RelativeLayout>

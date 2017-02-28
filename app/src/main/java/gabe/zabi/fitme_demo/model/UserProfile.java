@@ -14,7 +14,7 @@ public class UserProfile {
     private String name;
     private String email;
     private String phoneNumber;
-    private String gender;
+    private int gender;
     private String birthday;
     private String profileImage;
     private int goal;
@@ -29,6 +29,7 @@ public class UserProfile {
     private String question5;
     private String question6;
     private String specialQuestion;
+    private String my_plan;
 
     public UserProfile() {
     }
@@ -57,11 +58,11 @@ public class UserProfile {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 
@@ -175,6 +176,14 @@ public class UserProfile {
 
     public void setSpecialQuestion(String specialQuestion) {
         this.specialQuestion = specialQuestion;
+    }
+
+    public String getMy_plan() {
+        return my_plan;
+    }
+
+    public void setMy_plan(String my_plan) {
+        this.my_plan = my_plan;
     }
 
     public void saveUser(String createdUid) {

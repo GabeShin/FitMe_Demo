@@ -2,47 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/main_activity_app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <!--This Imageview will be inflated with profile picture of the user-->
-            <ImageView
-                android:id="@+id/appbar_profile_picture"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="50dp"
-                android:layout_marginStart="50dp"
-                android:scaleType="centerCrop"
-                android:fitsSystemWindows="true"
-                android:layout_centerVertical="true"
-                android:background="@android:color/darker_gray"/>
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/plan_activity_tool_bar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"/>
-        </RelativeLayout>
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/plan_activity_recycler_view"
+    <FrameLayout
+        android:id="@+id/search_plan_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        android:text="There's no workout plans available."/>
-
 </RelativeLayout>

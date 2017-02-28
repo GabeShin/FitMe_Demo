@@ -35,7 +35,7 @@ public class MyDbHelper extends SQLiteOpenHelper {
                 UserEntry.COLUMN_NAME + " TEXT, " +
                 UserEntry.COLUMN_EMAIL + " TEXT, " +
                 UserEntry.COLUMN_PHONE_NUMBER + " TEXT, " +
-                UserEntry.COLUMN_GENDER + " TEXT, " +
+                UserEntry.COLUMN_GENDER + " INTEGER, " +
                 UserEntry.COLUMN_BIRTHDAY + " TEXT, " +
                 UserEntry.COLUMN_PROFILE_IMAGE + " TEXT, " +
                 UserEntry.COLUMN_NICKNAME + " TEXT, " +

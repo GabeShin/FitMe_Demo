@@ -18,6 +18,23 @@
     <!--Strings Used for PlanActivity Layout-->
     <string name="add_a_plan">Add a Plan</string>
 
+    <!--Strings for Navigation Drawer-->
+    <string-array name="navigation_drawer_list">
+        <item>@string/drawer_my_profile</item>
+        <item>@string/drawer_my_plan</item>
+        <item>@string/drawer_search_plan</item>
+        <item>@string/drawer_info</item>
+        <item>@string/drawer_alarm</item>
+        <item>@string/drawer_log_out</item>
+    </string-array>
+
+    <string name="drawer_my_profile">MyProfile</string>
+    <string name="drawer_my_plan">MyPlan</string>
+    <string name="drawer_search_plan">Search Plan</string>
+    <string name="drawer_info">Information</string>
+    <string name="drawer_alarm">Alarm Setting</string>
+    <string name="drawer_log_out">Logout</string>
+
     <!--Strings for Exercise Level-->
     <string-array name="exercise_experience">
         <item>@string/exercise_experience_beginner</item>

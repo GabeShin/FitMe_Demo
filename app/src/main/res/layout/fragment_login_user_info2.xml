@@ -119,6 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:inputType="number"
             android:hint="@string/profile_hint_birthday"/>
     </RelativeLayout>
 
