@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -58,6 +59,7 @@ public class MainActivity extends BaseActivity {
     private ListView mDrawerList;
 
     private ImageView mAddPlanImageView;
+    private Button mCompleteButton;
 
     private String currentPlan;
     private int currentWorkoutDay;
@@ -86,6 +88,7 @@ public class MainActivity extends BaseActivity {
 
                 if (myActivity == null){
                     mAddPlanImageView.setVisibility(View.VISIBLE);
+                    mCompleteButton.setVisibility(View.GONE);
                 } else {
                     currentPlan = myActivity.getCurrent_plan_uid();
                     currentWorkoutDay = myActivity.getCurrent_workout_day();
@@ -102,7 +105,6 @@ public class MainActivity extends BaseActivity {
                             WorkoutFragment fragment = new WorkoutFragment().newInstance(currentWorkoutDay, workouts.get(currentWorkoutDay));
                             getSupportFragmentManager().beginTransaction().replace(R.id.main_container, fragment).commit();
                         }
-
                         @Override
                         public void onCancelled(FirebaseError firebaseError) {
                             Log.e(LOG_TAG, getString(R.string.log_error_the_read_failed) + firebaseError.getMessage());
@@ -123,6 +125,7 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         mAddPlanImageView = (ImageView) findViewById(R.id.add_a_plan_button);
+        mCompleteButton = (Button) findViewById(R.id.main_complete_button);
 
         String[] navigationArray = getResources().getStringArray(R.array.navigation_drawer_list);
         mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, navigationArray);
