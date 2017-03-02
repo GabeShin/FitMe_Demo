@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 25
@@ -32,7 +31,6 @@ repositories {
 
 repositories {
     jcenter()
-    maven { url 'http://devrepo.kakao.com:8088/nexus/content/groups/public/' }
 }
 
 dependencies {
@@ -49,15 +47,14 @@ dependencies {
 
     /* Firebase */
     compile 'com.firebase:firebase-client-android:2.5.2'
-    compile 'com.google.firebase:firebase-auth:9.0.0'
-    compile 'com.google.firebase:firebase-database:9.0.0'
+    compile 'com.google.firebase:firebase-auth:10.2.0'
 
     /* Firebase UI */
     compile 'com.firebaseui:firebase-ui:0.2.2'
 
     /* For Google Play Services */
-    compile 'com.google.android.gms:play-services-safetynet:9.0.0'
-    compile 'com.google.android.gms:play-services-auth:9.0.0'
+    compile 'com.google.android.gms:play-services-safetynet:10.2.0'
+    compile 'com.google.android.gms:play-services-auth:10.2.0'
 
     /* For Facebook Login */
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
@@ -68,4 +65,4 @@ dependencies {
     /* Circle Indicator by Ongakuer */
     compile 'me.relex:circleindicator:1.2.2@aar'
 }
-
+apply plugin: 'com.google.gms.google-services'

@@ -66,13 +66,8 @@ public class User {
     }
 
     public void saveUser() {
-        String createdUid = Utils.getEncodedEmail(email) + "%20" + provider;
+        String createdUid = Utils.encodeEmail(email);
         Firebase userRef = new Firebase(Constants.FIREBASE_URL_USER).child(createdUid).child(Constants.FIREBASE_LOCATION_ACCOUNT_INFO);
-
-        if (getProvider() == Constants.KEY_VALUE_KAKAO_PROVIDER){
-            userRef.setValue(this);
-        } else {
-            userRef.setValue(this);
-        }
+        userRef.setValue(this);
     }
 }

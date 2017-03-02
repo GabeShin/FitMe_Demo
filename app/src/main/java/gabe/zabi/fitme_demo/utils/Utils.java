@@ -20,7 +20,7 @@ public class Utils {
      * @param emailOrNumber
      * @return
      */
-    public static String getEncodedEmail(String emailOrNumber){
+    public static String encodeEmail(String emailOrNumber){
         return emailOrNumber.replace("%", "%25")
                 .replace(".", "%2E")
                 .replace("#", "%23")

@@ -3,17 +3,17 @@ package gabe.zabi.fitme_demo.ui.loginActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -22,7 +22,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -35,13 +34,17 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
-import java.security.MessageDigest;
 import java.util.Arrays;
 
 import gabe.zabi.fitme_demo.R;
@@ -52,9 +55,9 @@ import gabe.zabi.fitme_demo.utils.Utils;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
-public class LoginInitialFragment extends Fragment implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
+public class LoginFragment extends Fragment implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
 
-    private static final String LOG_TAG = LoginInitialFragment.class.getSimpleName();
+    private static final String LOG_TAG = LoginFragment.class.getSimpleName();
     private static final int GOOGLE_SIGN_IN = 9001;
     private static final int FACEBOOK_SIGN_IN = 64206;
 
@@ -63,31 +66,32 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
 
     private GoogleApiClient mGoogleApiClient;
 
-    public User user;
-    String uid = null;
-    String name = null;
-    String email = null;
-    String imagePath = null;
-    String provider = null;
-    String encodedUid;
+    private EditText mEtEmail;
+    private EditText mEtPassword;
+
+    private String email = null;
+    private String password = null;
 
     Communicator communicator;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private Firebase mUserRef;
-    private AuthData mAuthData;
 
-    public LoginInitialFragment() {
+    public LoginFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_login_initial, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
 
         // set OnClickListeners
         rootView.findViewById(R.id.fb_login_button).setOnClickListener(this);
@@ -98,8 +102,10 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
          */
         // Configure sign-in to request the user's ID, email address and basic profile.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+
         // Build GoogleApiClient with access to the Google Sign-In API and the options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .enableAutoManage(getActivity() /* FragmentActivity */, this /* OnConnectionFailedListener */)
@@ -112,8 +118,15 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
         // create Firebase reference
         mUserRef = new Firebase(Constants.FIREBASE_URL_USER);
 
-        checkUserLogin();
-        initializeScreen();
+        initializeScreen(rootView);
+
+        Button signInButton = (Button) rootView.findViewById(R.id.login_sign_in_button);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInUsingEmailandPassword();
+            }
+        });
 
         // Inflate the layout for this fragment
         return rootView;
@@ -132,15 +145,27 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private void initializeScreen() {
+    private void initializeScreen(View view ) {
+        mEtEmail = (EditText) view.findViewById(R.id.login_email_edit_text);
+        mEtPassword = (EditText) view.findViewById(R.id.login_password_edit_text);
 
+        TextView signUpWithEmail = (TextView) view.findViewById(R.id.sign_up_with_email);
+        signUpWithEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isAdded()) {
+                    Fragment fragment = new AccountInformationFragment();
+                    communicator.sendUserInfo(fragment, false);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.login_container, fragment).commit();
+                }
+            }
+        });
     }
 
     /**
      * Setup AuthStateListener that responds to changes in the user's sign-in state.
      */
-    private void checkUserLogin(){
-
+    private void checkForAuthState(){
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -148,12 +173,14 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
                 if (user != null){
                     // User is signed in
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    checkForNewUser();
                 } else {
                     // User is signed out
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_out");
                 }
             }
         };
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
@@ -163,59 +190,21 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
          * This needs to be checked through Firebase.
          * If the user is existing user, login the user immediately, if there is createdUid SharedPreference.
          */
-        String createdUid = Utils.getSharedPreferenceUid(getApplicationContext());
-        Log.v(LOG_TAG, "CreatedUid is " + createdUid);
-
-        if (createdUid != null) {
-            // create intent to start MainActivity
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-        }
-
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+        // set us AuthStateListener
+        checkForAuthState();
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         mAuth.removeAuthStateListener(mAuthListener);
-    }
-
-    private void getAppKeyHash() {
-        try {
-            PackageInfo info = getActivity().getPackageManager()
-                    .getPackageInfo(getActivity().getPackageName(), PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md;
-                md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String something = new String(Base64.encode(md.digest(), 0));
-                Log.d("Hash key", something);
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            Log.e("name not found", e.toString());
-        }
-    }
-
-    private void saveUserToFirebase(){
-        user = new User();
-
-        user.setId(uid);
-        user.setName(name);
-        user.setEmail(email);
-        user.setProvider(provider);
-
-        user.saveUser();
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
-
 
     /**
      * Facebook Log In  Methods
@@ -230,7 +219,7 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.v(LOG_TAG, "Successfully Log In Using Facebook");
-                retrieveFacebookLoginData(loginResult.getAccessToken());
+                authWithFacebookCredential(loginResult.getAccessToken());
             }
 
             @Override
@@ -244,7 +233,6 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
                 Toast.makeText(getApplicationContext(), "" + error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-
     }
 
     public void onFacebookLogInClicked() {
@@ -252,33 +240,23 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
         mLoginManager.logInWithReadPermissions(getActivity(), Arrays.asList("public_profile"));
     }
 
-    private void retrieveFacebookLoginData(AccessToken accessToken) {
-        Log.v(LOG_TAG, "Saving Facebook Log in Data");
-        user = new User();
+    private void authWithFacebookCredential(AccessToken accessToken) {
+        Log.v(LOG_TAG, "Authenticate with Facebook credential");
 
         AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.v(LOG_TAG, "Saving Facebook Log in Data");
-                        FirebaseUser firebaseUser = task.getResult().getUser();
-
-                        uid = firebaseUser.getUid();
-                        name = firebaseUser.getDisplayName();
-                        email = firebaseUser.getEmail();
-                        imagePath = firebaseUser.getPhotoUrl().toString();
-                        provider = Constants.KEY_VALUE_FACEBOOK_PROVIDER;
-                        encodedUid = Utils.getEncodedEmail(email) + "%20" + provider;
-
-                        checkAndSaveFirebaseAndLaunchMainActivity();
-
+                        if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                            Toast.makeText(getApplicationContext(), "User with Email id already exists", Toast.LENGTH_SHORT).show();
+                        }
                         if (!task.isSuccessful()){
                             /* sign in failed. Display a message to the user. */
-
                             Log.w(LOG_TAG, "signInWithCredential", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                         }
+                        checkForAuthState();
                     }
                 });
     }
@@ -288,20 +266,27 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
      */
     public void onGoogleLogInClicked(){
         Log.v(LOG_TAG, "onGoogleLogInClicked!");
-        Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(intent, GOOGLE_SIGN_IN);
+        Intent signinIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signinIntent, GOOGLE_SIGN_IN);
     }
 
-    private void retrieveGoogleSignInData(GoogleSignInAccount account){
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                            Toast.makeText(getApplicationContext(), "User with Email id already exists", Toast.LENGTH_SHORT).show();
+                        }
 
-        uid = account.getId();
-        name = account.getDisplayName();
-        email = account.getEmail();
-        imagePath = account.getPhotoUrl().toString();
-        provider = Constants.KEY_VALUE_GOOGLE_PROVIDER;
-        encodedUid = Utils.getEncodedEmail(email) + "%20" + provider;
-
-        checkAndSaveFirebaseAndLaunchMainActivity();
+                        if (!task.isSuccessful()) {
+                            /* sign in failed. Display a message to the user. */
+                            Log.w(LOG_TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     /**
@@ -321,7 +306,7 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
                     Log.v(LOG_TAG, "Google Log In: onActivityResult - result is successful.");
                     // Google Sign In was successful, authenticate with Firebase.
                     GoogleSignInAccount account = result.getSignInAccount();
-                    retrieveGoogleSignInData(account);
+                    firebaseAuthWithGoogle(account);
                 }
                 break;
             case FACEBOOK_SIGN_IN:
@@ -332,45 +317,77 @@ public class LoginInitialFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private void checkAndSaveFirebaseAndLaunchMainActivity(){
-        mUserRef.child(encodedUid).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void checkForNewUser(){
+        String encodedUid = Utils.encodeEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        mUserRef.child(encodedUid + "/").child(Constants.FIREBASE_LOCATION_PROFILE_INFO).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // data already exists
-                    // the user is a returning user
-                    Log.v(LOG_TAG, "User is returning user");
-                    Utils.saveSharedPreferenceUid(getApplicationContext(), encodedUid);
-                    startActivity(new Intent(getActivity(), MainActivity.class));
-                } else {
-                    // data does not yet exist
+                boolean isReturningUser;
+
+                if (!dataSnapshot.exists()) {
                     // the user is a new user.
                     Log.v(LOG_TAG, "User is new user");
-                    Utils.saveSharedPreferenceUid(getApplicationContext(), encodedUid);
+                    isReturningUser = false;
+                } else {
+                    // the user is a returning user
+                    Log.v(LOG_TAG, "User is returning user");
+                    isReturningUser = true;
+                }
 
-                    saveUserToFirebase();
-
-                    Fragment fragment = new LoginUserInfo1Fragment();
-                    User user = new User();
-                    user.setEmail(email);
-                    user.setName(name);
-
-                    communicator.sendUserInfo(fragment, name, email, imagePath);
-
-                    android.support.v4.app.FragmentManager fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.login_container, fragment).commit();
+                if (isReturningUser){
+                    Activity activity = getActivity();
+                    if (isAdded() && activity != null) {
+                        Intent intent = new Intent(activity, MainActivity.class);
+                        startActivity(intent);
+                    }
+                } else {
+                    if (isAdded()) {
+                        Fragment fragment = new AccountInformationFragment();
+                        communicator.sendUserInfo(fragment, true);
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.login_container, fragment).commit();
+                    }
                 }
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
             }
         });
     }
 
+    private void signInUsingEmailandPassword(){
+        email = mEtEmail.getText().toString().trim();
+        password = mEtPassword.getText().toString();
+
+        if (email == "" || password == "" || email.isEmpty() || password.isEmpty()){
+            return;
+        }
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(LOG_TAG, "signInWithEmail:failed", task.getException());
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseNetworkException e){
+                                Toast.makeText(getApplicationContext(), "Please check network connectivity", Toast.LENGTH_SHORT).show();
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                Log.v(LOG_TAG, "invalid credential");
+                                Toast.makeText(getApplicationContext(), "Please check your email and password", Toast.LENGTH_SHORT).show();
+                            } catch(Exception e) {
+                                Log.e(LOG_TAG, e.getMessage());
+                                Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                    }
+                });
+    }
+
     public interface Communicator{
-        public void sendUserInfo(Fragment fragment, String name, String email, String imagePath);
+        public void sendUserInfo(Fragment fragment, boolean loggedInFromProvider);
     }
 
     @Override

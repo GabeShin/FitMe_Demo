@@ -27,8 +27,6 @@ public abstract class BaseActivity extends AppCompatActivity
     protected GoogleApiClient mGoogleApiClient;
 
     protected String mCreatedUid;
-    protected String mProvider;
-    protected String mProfilePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +56,7 @@ public abstract class BaseActivity extends AppCompatActivity
         /**
          * Getting mProvider and mCreatedUid from SharedPreference
          */
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        mCreatedUid = Utils.getSharedPreferenceUid(getApplicationContext());
-        mProvider = sp.getString(Constants.KEY_PROVIDER, null);
+        mCreatedUid = Utils.encodeEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     }
 
     @Override

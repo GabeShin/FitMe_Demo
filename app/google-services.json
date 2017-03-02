@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "179172931664-duevd274f41kdvn42q5hn7kb04dt2bnh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "gabe.zabi.fitme_demo",
+            "certificate_hash": "495d9e80577553f66c43b1141e0261a4285155e1"
+          }
+        },
+        {
           "client_id": "179172931664-52rct1shqe26a6l30g8imuhthkjr8vkg.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -36,6 +44,37 @@
               "client_type": 3
             }
           ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179172931664:android:f7aa4191cc3f1c0c",
+        "android_client_info": {
+          "package_name": "gabe.zabi.fitme_trainer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179172931664-52rct1shqe26a6l30g8imuhthkjr8vkg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmh-uKjqMSO7q4zGsCaiCcntTLBw5UHiE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

@@ -121,7 +121,7 @@
                     android:inputType="text"
                     style="@style/gridlayout_right_elements"
                     android:textColor="@color/colorAccent"
-                    android:hint="@string/profile_hint_nickname"/>
+                    android:hint="@string/profile_hint_password"/>
                 <View style="@style/gridlayout_spaces" />
 
                 <TextView

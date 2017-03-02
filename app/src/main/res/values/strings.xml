@@ -28,6 +28,10 @@
         <item>@string/drawer_log_out</item>
     </string-array>
 
+    <!--Strings for Navigation Drawer Toggle-->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
     <string name="drawer_my_profile">MyProfile</string>
     <string name="drawer_my_plan">MyPlan</string>
     <string name="drawer_search_plan">Search Plan</string>
@@ -71,7 +75,7 @@
     <string name="profile_hint_birthday">Year of Birth</string>
 
     <string name="profile_hint_goal">Choose Your Fitness Goal</string>
-    <string name="profile_hint_nickname">Your Nickname</string>
+    <string name="profile_hint_password">******</string>
     <string name="profile_hint_height">Your Height</string>
     <string name="profile_hint_weight">Your Weight</string>
     <string name="profile_hint_experience">Select Your Experience</string>

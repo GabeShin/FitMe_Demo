@@ -13,6 +13,7 @@ public class UserProfile {
 
     private String name;
     private String email;
+    private String password;
     private String phoneNumber;
     private int gender;
     private String birthday;
@@ -34,6 +35,12 @@ public class UserProfile {
     public UserProfile() {
     }
 
+    public void saveUser() {
+        String createdUid = Utils.encodeEmail(email);
+        Firebase userRef = new Firebase(Constants.FIREBASE_URL_USER).child(createdUid).child(Constants.FIREBASE_LOCATION_PROFILE_INFO);
+        userRef.setValue(this);
+    }
+
     public String getName() {
         return name;
     }
@@ -48,6 +55,14 @@ public class UserProfile {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPhoneNumber() {
