@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.firebase.client.AuthData;
+import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -81,7 +83,6 @@ public abstract class BaseActivity extends AppCompatActivity
         switch (id){
             case R.id.action_logout:
                 FirebaseAuth.getInstance().signOut();
-                Utils.clearSharedPreferenceUid(getApplicationContext());
                 takeUserToLoginScreenOnUnAuth();
         }
         return super.onOptionsItemSelected(item);

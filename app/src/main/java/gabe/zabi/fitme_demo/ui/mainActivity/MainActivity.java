@@ -34,6 +34,7 @@ import java.util.Map;
 import gabe.zabi.fitme_demo.model.Plan;
 import gabe.zabi.fitme_demo.model.UserActivity;
 import gabe.zabi.fitme_demo.model.Workouts;
+import gabe.zabi.fitme_demo.ui.detailPlanActivity.DetailPlanActivity;
 import gabe.zabi.fitme_demo.ui.detailPlanActivity.WorkoutFragment;
 import gabe.zabi.fitme_demo.ui.searchPlanActivity.SearchPlanActivity;
 import gabe.zabi.fitme_demo.ui.loginActivity.LoginActivity;
@@ -82,13 +83,6 @@ public class MainActivity extends BaseActivity {
          * Link layout elements from XML and setup the toolbar
          */
         initializeScreen();
-
-        if (workouts != null) {
-            WorkoutFragment fragment = new WorkoutFragment().newInstance(currentWorkoutDay, workouts.get(currentWorkoutDay));
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.main_container, fragment);
-            transaction.commitAllowingStateLoss();
-        }
     }
 
     public void initializeScreen() {
@@ -113,7 +107,9 @@ public class MainActivity extends BaseActivity {
                         break;
                     case 1:
                         // MyPlan
-                        // Not yet
+                        Intent intent = new Intent(MainActivity.this, DetailPlanActivity.class);
+                        intent.putExtra("KEY_PLAN_UID", currentPlan);
+                        startActivity(intent);
                         break;
                     case 2:
                         // Search Plan
@@ -121,23 +117,15 @@ public class MainActivity extends BaseActivity {
                         finish();
                         break;
                     case 3:
-                        // Information
-                        // Not yet implemented
-                        break;
-                    case 4:
-                        // Alarm Setting
-                        // Not yet implemented
-                        break;
-                    case 5:
                         // Logout
                         FirebaseAuth.getInstance().signOut();
-                        Utils.clearSharedPreferenceUid(getApplicationContext());
+
                         /*
                          * Move user to LoginActivity and remove the backstack
                          */
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
+                        Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
                         finish();
                         break;
                 }
@@ -215,6 +203,13 @@ public class MainActivity extends BaseActivity {
                             Plan plan = dataSnapshot.getValue(Plan.class);
                             workouts = plan.getWorkouts();
                             currentPlanSize = workouts.size();
+
+                            if (workouts != null) {
+                                WorkoutFragment fragment = new WorkoutFragment().newInstance(currentWorkoutDay, workouts.get(currentWorkoutDay));
+                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.main_container, fragment);
+                                transaction.commit();
+                            }
                         }
 
                         @Override
@@ -245,11 +240,7 @@ public class MainActivity extends BaseActivity {
          * Perform fragment transaction.
          */
         mUserActivityRef.addValueEventListener(activityListener);
-        if (workouts != null) {
-            WorkoutFragment fragment = new WorkoutFragment().newInstance(currentWorkoutDay, workouts.get(currentWorkoutDay));
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.main_container, fragment);
-            transaction.commit();
-        }
     }
+
+
 }

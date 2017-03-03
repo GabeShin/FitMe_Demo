@@ -1,7 +1,9 @@
 package gabe.zabi.fitme_demo.ui.loginActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -191,7 +193,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Goo
          * If the user is existing user, login the user immediately, if there is createdUid SharedPreference.
          */
         super.onStart();
-        // set us AuthStateListener
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+            checkForNewUser();
+        }
+        // set up AuthStateListener
         checkForAuthState();
     }
 

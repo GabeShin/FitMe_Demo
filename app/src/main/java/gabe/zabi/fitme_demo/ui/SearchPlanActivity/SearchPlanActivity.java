@@ -1,5 +1,6 @@
 package gabe.zabi.fitme_demo.ui.searchPlanActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import gabe.zabi.fitme_demo.R;

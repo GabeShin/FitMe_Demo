@@ -18,7 +18,7 @@ public class GlobalApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Firebase.setAndroidContext(this);
-        Firebase.getDefaultConfig().setPersistenceEnabled(false);
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
         mInstance = this;
     }
 
