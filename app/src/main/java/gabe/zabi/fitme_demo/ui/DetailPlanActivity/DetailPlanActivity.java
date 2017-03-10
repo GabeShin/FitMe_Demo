@@ -2,6 +2,7 @@ package gabe.zabi.fitme_demo.ui.detailPlanActivity;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import java.util.Map;
 import gabe.zabi.fitme_demo.R;
 import gabe.zabi.fitme_demo.ui.BaseActivity;
 import gabe.zabi.fitme_demo.utils.Constants;
+import gabe.zabi.fitme_demo.utils.Utils;
 import me.relex.circleindicator.CircleIndicator;
 
 /**
@@ -24,7 +26,8 @@ public class DetailPlanActivity extends BaseActivity {
 
     private String mUid;
 
-    private TextView mTextViewUid;
+    private Toolbar mToolbar;
+
     private ViewPager mViewPager;
     private CircleIndicator mIndicator;
     private WorkoutPagerAdapter mAdapter;
@@ -51,6 +54,12 @@ public class DetailPlanActivity extends BaseActivity {
     }
 
     public void initializeScreen(){
+        mToolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         mViewPager = (ViewPager) findViewById(R.id.plan_viewpager);
         mIndicator = (CircleIndicator) findViewById(R.id.circle_indicator);
     }
@@ -58,13 +67,24 @@ public class DetailPlanActivity extends BaseActivity {
     public void onPlanButtonClicked(View view){
         Firebase userRef = new Firebase(Constants.FIREBASE_URL_USER + "/" + mCreatedUid + "/" + Constants.FIREBASE_LOCATION_USER_ACTIVITY);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("current_plan_uid", mUid);
-        map.put("current_workout_day", 0);
+        if (Utils.getSharedPreferencePlanUid(getApplicationContext()) != null &&
+                Utils.getSharedPreferencePlanUid(getApplicationContext()).equals(mUid)){
+            // this is current plan user is on. Tell user this.
+            Toast.makeText(getApplicationContext(), R.string.toast_message_current_plan_conflict, Toast.LENGTH_SHORT).show();
+        } else {
+            Map<String, Object> map = new HashMap<>();
+            map.put("current_plan_uid", mUid);
+            map.put("current_workout_day", 0);
+            map.put("current_workout_week", 1);
 
-        userRef.updateChildren(map);
+            userRef.updateChildren(map);
 
-        Toast.makeText(getApplicationContext(), "added to your plan!", Toast.LENGTH_SHORT).show();
-        finish();
+            Utils.saveSharedPreferencePlanUid(getApplicationContext(), mUid);
+            Utils.saveSharedPreferenceWorkoutDay(getApplicationContext(), 0);
+            Utils.saveSharedPreferenceWorkoutWeek(getApplicationContext(), 1);
+
+            Toast.makeText(getApplicationContext(), R.string.toast_message_successfully_added_new_plan, Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 }

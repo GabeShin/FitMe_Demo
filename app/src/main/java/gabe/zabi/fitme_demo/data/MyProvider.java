@@ -1,25 +1,14 @@
 package gabe.zabi.fitme_demo.data;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
-
-import static android.R.attr.breadCrumbShortTitle;
-import static android.R.attr.defaultHeight;
-import static android.R.attr.id;
-import static android.R.attr.switchMinWidth;
-import static gabe.zabi.fitme_demo.data.MyContract.CONTENT_AUTHORITY;
-import static gabe.zabi.fitme_demo.data.MyContract.PATH_USER_PROFILE;
-import static gabe.zabi.fitme_demo.data.MyContract.UserEntry.TABLE_NAME;
 
 /**
  * Created by Gabe on 2017-02-15.
@@ -32,8 +21,7 @@ public class MyProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MyDbHelper mOpenHelper;
 
-    static final int USER_PROFILE = 100;
-
+    static final int USER_EXERCISE_HISTORY = 100;
 
     /*
         Students: Here is where you need to create the UriMatcher. This UriMatcher will
@@ -52,7 +40,7 @@ public class MyProvider extends ContentProvider {
         final String authority = MyContract.CONTENT_AUTHORITY;
 
         // For each type of URI you want to add, create a corresponding code.
-        matcher.addURI(authority, MyContract.PATH_USER_PROFILE, USER_PROFILE);
+        matcher.addURI(authority, MyContract.PATH_WORKOUT_HISTORY, USER_EXERCISE_HISTORY);
         return matcher;
     }
 
@@ -67,9 +55,9 @@ public class MyProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor cursor;
         switch (sUriMatcher.match(uri)){
-            case USER_PROFILE:
+            case USER_EXERCISE_HISTORY:
                 cursor = mOpenHelper.getReadableDatabase().query(
-                        MyContract.UserEntry.TABLE_NAME,
+                        MyContract.UserHistoryEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -93,8 +81,8 @@ public class MyProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
 
         switch (match){
-            case USER_PROFILE:
-                return MyContract.UserEntry.CONTENT_TYPE;
+            case USER_EXERCISE_HISTORY:
+                return MyContract.UserHistoryEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -108,10 +96,10 @@ public class MyProvider extends ContentProvider {
         Uri returnUri;
 
         switch (match){
-            case USER_PROFILE:
-                long _id = db.insert(MyContract.UserEntry.TABLE_NAME, null, values);
+            case USER_EXERCISE_HISTORY:
+                long _id = db.insert(MyContract.UserHistoryEntry.TABLE_NAME, null, values);
                 if (_id > 0 ){
-                    returnUri = ContentUris.withAppendedId(MyContract.UserEntry.CONTENT_URI, _id);
+                    returnUri = ContentUris.withAppendedId(MyContract.UserHistoryEntry.CONTENT_URI, _id);
                 } else {
                     throw new SQLException("Failed to insert row into " + uri);
                 }
@@ -133,8 +121,8 @@ public class MyProvider extends ContentProvider {
         if (selection == null) selection = "1";
 
         switch (match){
-            case USER_PROFILE:
-                rowsDeleted = db.delete(MyContract.UserEntry.TABLE_NAME, selection, selectionArgs);
+            case USER_EXERCISE_HISTORY:
+                rowsDeleted = db.delete(MyContract.UserHistoryEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -152,8 +140,8 @@ public class MyProvider extends ContentProvider {
         int rowsUpdated;
 
         switch (match){
-            case USER_PROFILE:
-                rowsUpdated = db.update(MyContract.UserEntry.TABLE_NAME, values, selection, selectionArgs);
+            case USER_EXERCISE_HISTORY:
+                rowsUpdated = db.update(MyContract.UserHistoryEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri " + uri);

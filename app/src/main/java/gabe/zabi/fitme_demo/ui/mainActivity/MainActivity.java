@@ -3,6 +3,8 @@ package gabe.zabi.fitme_demo.ui.mainActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
@@ -11,7 +13,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,10 +33,18 @@ import com.firebase.client.Transaction;
 import com.firebase.client.ValueEventListener;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import gabe.zabi.fitme_demo.data.AndroidDatabaseManager;
+import gabe.zabi.fitme_demo.data.MyContract;
+import gabe.zabi.fitme_demo.model.OneSet;
 import gabe.zabi.fitme_demo.model.Plan;
 import gabe.zabi.fitme_demo.model.UserActivity;
 import gabe.zabi.fitme_demo.model.Workouts;
@@ -45,6 +59,7 @@ import gabe.zabi.fitme_demo.utils.Utils;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by Gabe on 2017-01-31.
@@ -59,26 +74,21 @@ public class MainActivity extends BaseActivity {
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    private Toolbar mToolbar;
 
-    private ArrayAdapter<String> mAdapter;
     private ListView mDrawerList;
 
     private ImageView mAddPlanImageView;
-    private Button mCompleteButton;
-
-    private boolean isRunning;
 
     private UserActivity userActivity;
     private String currentPlan;
     private int currentWorkoutDay;
-    private int currentPlanSize;
     private ArrayList<Workouts> workouts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         /**
          * Link layout elements from XML and setup the toolbar
          */
@@ -90,11 +100,22 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         mAddPlanImageView = (ImageView) findViewById(R.id.add_a_plan_button);
-        mCompleteButton = (Button) findViewById(R.id.main_complete_button);
+
+        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         String[] navigationArray = getResources().getStringArray(R.array.navigation_drawer_list);
-        mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, navigationArray);
-        mDrawerList.setAdapter(mAdapter);
+        List<String> navigationItems = Arrays.asList(navigationArray);
+
+        mDrawerList.setAdapter(new DrawerAdapter(getApplicationContext(), navigationItems));
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -102,21 +123,28 @@ public class MainActivity extends BaseActivity {
                 switch (position) {
                     case 0:
                         // MyProfile
-                        startActivity(new Intent(MainActivity.this, ProfileSettingActivity.class));
-                        finish();
+                        Intent profile_intent = new Intent(MainActivity.this, ProfileSettingActivity.class);
+                        startActivity(profile_intent);
                         break;
                     case 1:
                         // MyPlan
-                        Intent intent = new Intent(MainActivity.this, DetailPlanActivity.class);
-                        intent.putExtra("KEY_PLAN_UID", currentPlan);
-                        startActivity(intent);
+                        Intent plan_intent = new Intent(MainActivity.this, DetailPlanActivity.class);
+                        plan_intent.putExtra("KEY_PLAN_UID", currentPlan);
+                        startActivity(plan_intent);
                         break;
                     case 2:
                         // Search Plan
-                        startActivity(new Intent(MainActivity.this, SearchPlanActivity.class));
-                        finish();
+                        Intent search_intent = new Intent(MainActivity.this, SearchPlanActivity.class);
+                        startActivity(search_intent);
                         break;
                     case 3:
+//                        /**
+//                         * Start android database manager activity
+//                         * Needs to be replaced later
+//                         */
+//                        Intent dbmanager = new Intent(MainActivity.this, AndroidDatabaseManager.class);
+//                        startActivity(dbmanager);
+
                         // Logout
                         FirebaseAuth.getInstance().signOut();
 
@@ -133,6 +161,32 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void onAddPlanClicked(View view) {
         Intent intent = new Intent(MainActivity.this, SearchPlanActivity.class);
         startActivity(intent);
@@ -140,37 +194,30 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Closing App")
-                .setMessage("Are you sure you want to close the app?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.addCategory(Intent.CATEGORY_HOME);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        finish();
-                        System.exit(0);
-                    }
+        int count = getSupportFragmentManager().getBackStackEntryCount();
 
-                })
-                .setNegativeButton("No", null)
-                .show();
-    }
+        if (count == 0) {
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Closing App")
+                    .setMessage("Are you sure you want to close the app?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Intent.ACTION_MAIN);
+                            intent.addCategory(Intent.CATEGORY_HOME);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            finish();
+                            System.exit(0);
+                        }
 
-    public void onCompleteButtonClicked(View view) {
-        Map<String, Object> map = new HashMap<>();
-        if (currentWorkoutDay == currentPlanSize - 1) {
-            // current workout day is the last day in the current plan
-            // go back to day 1
-            map.put("current_workout_day", 0);
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         } else {
-            map.put("current_workout_day", currentWorkoutDay + 1);
+            getSupportFragmentManager().popBackStack();
         }
-        mUserActivityRef.updateChildren(map);
-        Toast.makeText(getApplicationContext(), "Completed Today's Workout", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -190,10 +237,8 @@ public class MainActivity extends BaseActivity {
 
                 if (userActivity == null) {
                     mAddPlanImageView.setVisibility(View.VISIBLE);
-                    mCompleteButton.setVisibility(View.GONE);
                 } else {
                     currentPlan = userActivity.getCurrent_plan_uid();
-                    currentWorkoutDay = userActivity.getCurrent_workout_day();
 
                     // grab current plan
                     Firebase planRef = new Firebase(Constants.FIREBASE_URL_PLAN_LISTS).child(currentPlan);
@@ -202,10 +247,13 @@ public class MainActivity extends BaseActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Plan plan = dataSnapshot.getValue(Plan.class);
                             workouts = plan.getWorkouts();
-                            currentPlanSize = workouts.size();
+                            Utils.saveSharedPreferencePlanSize(getApplicationContext(), workouts.size());
+
+                            currentWorkoutDay = Utils.getSharedPreferenceWorkoutDay(getApplicationContext());
 
                             if (workouts != null) {
-                                WorkoutFragment fragment = new WorkoutFragment().newInstance(currentWorkoutDay, workouts.get(currentWorkoutDay));
+                                WorkoutFragment fragment = new WorkoutFragment()
+                                        .newInstance(userActivity.getCurrent_workout_day(), workouts.get(currentWorkoutDay), true);
                                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                                 transaction.replace(R.id.main_container, fragment);
                                 transaction.commit();

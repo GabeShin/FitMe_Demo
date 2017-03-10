@@ -255,12 +255,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Goo
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.getException() instanceof FirebaseAuthUserCollisionException) {
-                            Toast.makeText(getApplicationContext(), "User with Email id already exists", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), R.string.toast_message_email_conflict, Toast.LENGTH_SHORT).show();
                         }
                         if (!task.isSuccessful()){
                             /* sign in failed. Display a message to the user. */
                             Log.w(LOG_TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), R.string.toast_message_auth_failed, Toast.LENGTH_SHORT).show();
                         }
                         checkForAuthState();
                     }
@@ -283,13 +283,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Goo
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                            Toast.makeText(getApplicationContext(), "User with Email id already exists", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), R.string.toast_message_email_conflict, Toast.LENGTH_SHORT).show();
                         }
 
                         if (!task.isSuccessful()) {
                             /* sign in failed. Display a message to the user. */
                             Log.w(LOG_TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), R.string.toast_message_email_conflict, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -378,13 +378,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Goo
                             try {
                                 throw task.getException();
                             } catch (FirebaseNetworkException e){
-                                Toast.makeText(getApplicationContext(), "Please check network connectivity", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), R.string.toast_message_connectivity_issue, Toast.LENGTH_SHORT).show();
                             } catch(FirebaseAuthInvalidCredentialsException e) {
                                 Log.v(LOG_TAG, "invalid credential");
-                                Toast.makeText(getApplicationContext(), "Please check your email and password", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), R.string.toast_message_invalid_email_password, Toast.LENGTH_SHORT).show();
                             } catch(Exception e) {
                                 Log.e(LOG_TAG, e.getMessage());
-                                Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), R.string.toast_message_auth_failed, Toast.LENGTH_SHORT).show();
                             }
                         }
 

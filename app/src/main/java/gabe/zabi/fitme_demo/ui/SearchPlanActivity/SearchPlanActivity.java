@@ -2,6 +2,7 @@ package gabe.zabi.fitme_demo.ui.searchPlanActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 
 import gabe.zabi.fitme_demo.R;
 import gabe.zabi.fitme_demo.ui.BaseActivity;
@@ -11,6 +12,9 @@ import gabe.zabi.fitme_demo.ui.BaseActivity;
  */
 
 public class SearchPlanActivity extends BaseActivity implements PlanListFragment.PlanCommunicator{
+
+    private Toolbar mToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +25,12 @@ public class SearchPlanActivity extends BaseActivity implements PlanListFragment
             PlanListFragment planListFragment = new PlanListFragment();
             getFragmentManager().beginTransaction().add(R.id.search_plan_container, planListFragment).commit();
         }
+
+        mToolbar = (Toolbar) findViewById(R.id.search_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override

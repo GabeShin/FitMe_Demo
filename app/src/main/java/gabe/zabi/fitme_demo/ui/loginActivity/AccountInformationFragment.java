@@ -85,11 +85,15 @@ public class AccountInformationFragment extends Fragment {
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null){
-            mEtEmail.setText(mFirebaseUser.getEmail());
+            mImagePath = mFirebaseUser.getPhotoUrl().toString();
+            mName = mFirebaseUser.getDisplayName();
+            mEmail = mFirebaseUser.getEmail();
+
+            mEtEmail.setText(mEmail);
             mEtEmail.setEnabled(false);
-            mEtName.setText(mFirebaseUser.getDisplayName());
+            mEtName.setText(mName);
             Picasso.with(getApplicationContext())
-                    .load(mFirebaseUser.getPhotoUrl())
+                    .load(mImagePath)
                     .placeholder(R.drawable.ic_account_circle_white_24dp)
                     .transform(new CircleTransform())
                     .into(mProfilePic);
@@ -122,7 +126,7 @@ public class AccountInformationFragment extends Fragment {
                                             /* sign up failed. Display a message to the user. */
                                             // FOR SOME REASON, FirebaseAuthWeakPasswordException is NEVER caught!
                                             if (mPassword.length() < 6){
-                                                Toast.makeText(getApplicationContext(), "Password is too weak", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getApplicationContext(), R.string.toast_message_weak_password, Toast.LENGTH_SHORT).show();
                                             }
 
 
@@ -131,13 +135,13 @@ public class AccountInformationFragment extends Fragment {
                                                 throw task.getException();
                                             } catch (FirebaseAuthWeakPasswordException e){
                                                 Log.v(LOG_TAG, "password is too weak");
-                                                Toast.makeText(getApplicationContext(), "Password is too weak", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getApplicationContext(), R.string.toast_message_weak_password, Toast.LENGTH_SHORT).show();
                                             } catch(FirebaseAuthInvalidCredentialsException e) {
                                                 Log.v(LOG_TAG, "Email is invalid");
-                                                Toast.makeText(getApplicationContext(), "Email is invalid", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getApplicationContext(), R.string.toast_message_invalid_email, Toast.LENGTH_SHORT).show();
                                             } catch(FirebaseAuthUserCollisionException e) {
                                                 Log.v(LOG_TAG, "User with Email id already exists");
-                                                Toast.makeText(getApplicationContext(), "User with Email id already exists", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getApplicationContext(), R.string.toast_message_email_conflict, Toast.LENGTH_SHORT).show();
                                             } catch(Exception e) {
                                                 Log.e(LOG_TAG, e.getMessage());
                                             }
@@ -225,10 +229,9 @@ public class AccountInformationFragment extends Fragment {
     }
 
     private void getUserInputs(){
-        mEmail = mEtEmail.getText().toString().trim();
-        mName = mEtName.getText().toString().trim();
+        mEmail = mEtEmail.getText().toString();
         mPassword = mEtPassword.getText().toString();
-        mGoal = mSpinnerGender.getSelectedItemPosition();
+        mGoal = mSpinnerGoal.getSelectedItemPosition();
         mGender = mSpinnerGender.getSelectedItemPosition();
         mBirthyear = mEtBirthyear.getText().toString().trim();
     }
@@ -238,7 +241,7 @@ public class AccountInformationFragment extends Fragment {
         user.setName(mName);
         user.setEmail(mEmail);
         user.setPassword(mPassword);
-
+        user.setProfileImage(mImagePath);
         user.setGender(mGender);
         user.setGoal(mGoal);
         user.setBirthday(mBirthyear);

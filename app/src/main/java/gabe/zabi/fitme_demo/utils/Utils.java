@@ -1,6 +1,7 @@
 package gabe.zabi.fitme_demo.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -43,30 +44,56 @@ public class Utils {
 
 
     /**
-     * Save SharedPreferenceUid in order to auto log-in the user.
-     *
-     * @param context
-     * @param uid
+     * Save SharedPreference Plan parameters
      */
-    public static void saveSharedPreferenceUid(Context context, String uid){
+
+    public static void saveSharedPreferencePlanUid(Context context, String uid){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString(Constants.KEY_CREATED_UID, uid);
+        editor.putString(Constants.KEY_WORKOUT_UID, uid);
         editor.apply();
     }
 
-    public static String getSharedPreferenceUid(Context context){
+    public static String getSharedPreferencePlanUid(Context context){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString(Constants.KEY_CREATED_UID, null);
+        return sp.getString(Constants.KEY_WORKOUT_UID, null);
     }
 
-    public static void clearSharedPreferenceUid(Context context){
+    public static void saveSharedPreferenceWorkoutWeek(Context context, int week){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
-        editor.clear();
-        editor.commit();
+        editor.putInt(Constants.KEY_WORKOUT_WEEK, week);
+        editor.apply();
     }
 
+    public static int getSharedPreferenceWorkoutWeek(Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getInt(Constants.KEY_WORKOUT_WEEK, 1);
+    }
+
+    public static void saveSharedPreferenceWorkoutDay(Context context, int day){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(Constants.KEY_WORKOUT_DAY, day);
+        editor.apply();
+    }
+
+    public static int getSharedPreferenceWorkoutDay(Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getInt(Constants.KEY_WORKOUT_DAY, 1);
+    }
+
+    public static int getSharedPreferencePlanSize(Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getInt(Constants.KEY_PLAN_SIZE, 1);
+    }
+
+    public static void saveSharedPreferencePlanSize(Context context, int size){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(Constants.KEY_PLAN_SIZE, size);
+        editor.apply();
+    }
     /**
      * Methods for troll-checking user inputs.
      */

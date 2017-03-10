@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="gabe.zabi.fitme_demo.ui.loginActivity.ProfileInformationFragment">
+    android:orientation="vertical">
 
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
@@ -79,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="18sp"
-            android:text="Gender (Optional)"/>
+            android:text="@string/gender"/>
         <Spinner
             android:id="@+id/spinner_gender"
             android:layout_width="0dp"
@@ -102,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="18sp"
-            android:text="Year of Birth (Optional)" />
+            android:text="@string/birthyear" />
         <EditText
             android:id="@+id/login_user_birthday"
             android:layout_width="0dp"
@@ -124,7 +123,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="18sp"
-            android:text="Goal (Optional)"/>
+            android:text="@string/goal"/>
         <Spinner
             android:id="@+id/spinner_goal"
             android:layout_width="0dp"
@@ -145,6 +144,6 @@
         android:id="@+id/login_next_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign Up" />
+        android:text="@string/sign_up" />
 
 </LinearLayout>

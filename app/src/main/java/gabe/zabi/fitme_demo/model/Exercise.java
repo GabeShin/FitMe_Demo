@@ -1,6 +1,7 @@
 package gabe.zabi.fitme_demo.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Gabe on 2017-02-22.
@@ -11,6 +12,7 @@ public class Exercise implements Serializable {
     private String numberOfSets;
     private String recommendedReps;
     private String weight;
+    private ArrayList<OneSet> sets;
 
     public Exercise() {
     }
@@ -45,5 +47,13 @@ public class Exercise implements Serializable {
 
     public void setWeight(String weight) {
         this.weight = weight;
+    }
+
+    public ArrayList<OneSet> getSets() {
+        return sets;
+    }
+
+    public void setSets(ArrayList<OneSet> sets) {
+        this.sets = sets;
     }
 }

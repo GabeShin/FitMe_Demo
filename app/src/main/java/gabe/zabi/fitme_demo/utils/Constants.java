@@ -13,6 +13,7 @@ public class Constants {
     public static final String FIREBASE_LOCATION_PLAN_OVERVIEW = "plan_overview";
     public static final String FIREBASE_LOCATION_WORKOUTS = "workouts";
     public static final String FIREBASE_LOCATION_USER_ACTIVITY = "user_activity";
+    public static final String FIREBASE_LOCATION_HISTORY = "history";
 
     public static final String FIREBASE_URL = "https://fitme-fe04c.firebaseio.com/";
     public static final String FIREBASE_URL_USER = FIREBASE_URL + "/" + FIREBASE_LOCATION_USER;
@@ -22,11 +23,13 @@ public class Constants {
      * Constants for SharedPreference Keys
      */
     public static String KEY_CREATED_UID = "CREATED_UID_KEY";
+    public static String KEY_WORKOUT_UID = "WORKOUT_UID_KEY";
+    public static String KEY_WORKOUT_WEEK = "WORKOUT_WEEK_KEY";
+    public static String KEY_WORKOUT_DAY = "WORKOUT_DAY_KEY";
+    public static String KEY_PLAN_SIZE = "PLAN_SIZE_KEY";
 
-    public static String KEY_PROVIDER = "PROVIDER_KEY";
-    public static final String KEY_VALUE_GOOGLE_PROVIDER = "google";
-    public static final String KEY_VALUE_FACEBOOK_PROVIDER = "facebook";
-    public static final String KEY_VALUE_KAKAO_PROVIDER = "kakao";
+    public static final String KEY_VALUE_EXERCISE_NAME = "exercise_name";
+    public static final String KEY_VALUE_DATE_OF = "date_if";
 
     /**
      * Constants for Firebase Log In

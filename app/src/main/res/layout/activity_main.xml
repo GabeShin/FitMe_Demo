@@ -13,9 +13,24 @@
         android:orientation="vertical"
         tools:context="gabe.zabi.fitme_demo.ui.mainActivity.MainActivity">
 
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/main_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+        </android.support.design.widget.AppBarLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize">
 
             <FrameLayout
                 android:id="@+id/main_container"
@@ -31,14 +46,6 @@
                 android:layout_centerInParent="true"
                 android:background="@android:color/darker_gray"
                 android:onClick="onAddPlanClicked"/>
-
-            <Button
-                android:id="@+id/main_complete_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:text="Completed this workout!"
-                android:onClick="onCompleteButtonClicked"/>
         </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>
@@ -47,10 +54,14 @@
     <ListView android:id="@+id/left_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="24dp"
+        android:layout_marginLeft="-65dp"
+        android:layout_marginStart="-65dp"
         android:layout_gravity="start"
+        android:foregroundGravity="center"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
-        android:dividerHeight="5dp"
+        android:dividerHeight="0dp"
         android:background="@color/colorAccentTransparent"/>
 </android.support.v4.widget.DrawerLayout>
 

@@ -1,11 +1,18 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="drawerArrowStyle">@style/WhiteDrawerArrowToggle</item>
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_arrow_back_white_24dp</item>
+    </style>
+
+    <style name="WhiteDrawerArrowToggle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@android:color/white</item>
     </style>
 
     <style name="cardview_font_style">
@@ -17,49 +24,30 @@
     </style>
     
     <style name="gridlayout_left_elements">
-        <item name="android:layout_gravity">left</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">left</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:layout_marginBottom">12dp</item>
-        <item name="android:layout_marginLeft">15dp</item>
-        <item name="android:layout_marginStart">15dp</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:layout_marginLeft">12dp</item>
+        <item name="android:layout_marginStart">12dp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:textColor">@android:color/darker_gray</item>
     </style>
 
-    <style name="gridlayout_long_questions">
-        <item name="android:layout_columnSpan">2</item>
-        <item name="android:layout_gravity">left</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:paddingLeft">15dp</item>
-        <item name="android:paddingStart">15dp</item>
-        <item name="android:paddingRight">15dp</item>
-        <item name="android:paddingEnd">15dp</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-    <style name="gridlayout_long_answers">
-        <item name="android:layout_columnSpan">2</item>
-        <item name="android:layout_gravity">right</item>
-        <item name="android:gravity">right</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:paddingLeft">15dp</item>
-        <item name="android:paddingStart">15dp</item>
-        <item name="android:paddingRight">15dp</item>
-        <item name="android:paddingEnd">15dp</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/colorAccent</item>
-    </style>
-
     <style name="gridlayout_right_elements">
-        <item name="android:layout_gravity">right</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">3</item>
         <item name="android:gravity">right</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:layout_marginBottom">12dp</item>
-        <item name="android:layout_marginRight">15dp</item>
-        <item name="android:layout_marginEnd">15dp</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:layout_marginRight">12dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:textSize">15sp</item>
     </style>
+
     <style name="gridlayout_spaces">
         <item name="android:layout_height">1dp</item>
         <item name="android:layout_width">match_parent</item>
@@ -68,4 +56,8 @@
         <item name="android:background">@android:color/background_light</item>
         <item name="android:layout_columnSpan">2</item>
     </style>
+
+    <style name="CustomTheme.Dialog" parent="Theme.AppCompat.Light.Dialog">
+    </style>
+
 </resources>

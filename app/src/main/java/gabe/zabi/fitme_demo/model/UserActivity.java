@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class UserActivity {
     private String current_plan_uid;
     private int current_workout_day;
+    private int current_workout_week;
 
     public UserActivity() {
     }
@@ -27,5 +28,13 @@ public class UserActivity {
 
     public void setCurrent_workout_day(int current_workout_day) {
         this.current_workout_day = current_workout_day;
+    }
+
+    public int getCurrent_workout_week() {
+        return current_workout_week;
+    }
+
+    public void setCurrent_workout_week(int current_workout_week) {
+        this.current_workout_week = current_workout_week;
     }
 }

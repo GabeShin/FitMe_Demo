@@ -46,12 +46,12 @@ public class SplashActivity extends Activity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user == null){
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                    finish();
                 } else {
                     Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                    finish();
                 }
             } catch (Exception e) {
                 // TODO: handle exception

@@ -53,8 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-
         /**
          * Getting mProvider and mCreatedUid from SharedPreference
          */
@@ -69,23 +67,6 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_base, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id){
-            case R.id.action_logout:
-                FirebaseAuth.getInstance().signOut();
-                takeUserToLoginScreenOnUnAuth();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

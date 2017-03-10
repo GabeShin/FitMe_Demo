@@ -27,7 +27,7 @@
         android:id="@+id/login_email_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="example@gmail.com"
+        android:hint="@string/hint_email"
         android:gravity="center"
         android:inputType="textEmailAddress"/>
 
@@ -35,7 +35,7 @@
         android:id="@+id/login_password_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="password"
+        android:hint="@string/hint_email"
         android:gravity="center"
         android:inputType="textPassword"/>
 
@@ -44,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Sign in"/>
+        android:text="@string/sign_in"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -56,14 +56,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Sign in With Facebook"
+            android:text="@string/sign_in_fb"
             android:layout_gravity="center_vertical" />
         <Button
             android:id="@+id/google_login_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Sign in with Google"
+            android:text="@string/sign_in_goog"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 
@@ -77,6 +77,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="sign up with email"/>
+        android:text="@string/register_email"/>
 
 </LinearLayout>

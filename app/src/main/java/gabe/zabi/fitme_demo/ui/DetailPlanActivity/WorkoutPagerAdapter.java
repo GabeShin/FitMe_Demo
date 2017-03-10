@@ -10,6 +10,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -66,7 +67,7 @@ public class WorkoutPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return WorkoutFragment.newInstance(position, workoutList.get(position));
+        return WorkoutFragment.newInstance(position, workoutList.get(position), false);
     }
 
     @Override

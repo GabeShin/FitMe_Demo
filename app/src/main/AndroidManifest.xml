@@ -37,10 +37,10 @@
 
         </activity>
 
-        <activity android:name=".ui.loginActivity.LoginActivity" />
+        <activity android:name=".ui.loginActivity.LoginActivity"/>
 
         <activity android:name=".ui.searchPlanActivity.SearchPlanActivity"
-            android:parentActivityName=".ui.mainActivity.MainActivity"/>
+            android:parentActivityName=".ui.mainActivity.MainActivity" />
 
         <activity android:name=".ui.myReportActivity.MyReportActivity"
             android:parentActivityName=".ui.mainActivity.MainActivity"/>
@@ -50,6 +50,9 @@
 
         <activity android:name=".ui.detailPlanActivity.DetailPlanActivity"
             android:parentActivityName=".ui.searchPlanActivity.SearchPlanActivity"/>
+
+        <activity android:name=".data.AndroidDatabaseManager"
+            android:theme="@style/Theme.AppCompat.Light"/>
 
     </application>
 </manifest>

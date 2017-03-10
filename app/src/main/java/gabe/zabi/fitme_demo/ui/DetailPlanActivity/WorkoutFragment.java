@@ -1,22 +1,48 @@
 package gabe.zabi.fitme_demo.ui.detailPlanActivity;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import gabe.zabi.fitme_demo.R;
+import gabe.zabi.fitme_demo.data.MyContract;
 import gabe.zabi.fitme_demo.model.Exercise;
+import gabe.zabi.fitme_demo.model.OneSet;
+import gabe.zabi.fitme_demo.model.Plan;
+import gabe.zabi.fitme_demo.model.UserActivity;
 import gabe.zabi.fitme_demo.model.Workouts;
+import gabe.zabi.fitme_demo.ui.mainActivity.TrackerFragment;
+import gabe.zabi.fitme_demo.utils.Constants;
+import gabe.zabi.fitme_demo.utils.Utils;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
+import static com.fasterxml.jackson.core.JsonParser.NumberType.INT;
 
 /**
  * Created by Gabe on 2017-02-24.
@@ -26,15 +52,19 @@ public class WorkoutFragment extends android.support.v4.app.Fragment {
 
     private static final String LOG_TAG = WorkoutFragment.class.getSimpleName();
 
-    private String uid;
+    private int position;
     private Workouts currentWorkout;
+    private boolean fromMainActivity;
+
     private ListView mListView;
+    private Button mCompleteButton;
     private ArrayList<Exercise> exercises;
 
-    public static WorkoutFragment newInstance(int position, Workouts workouts) {
+    public static WorkoutFragment newInstance(int position, Workouts workouts, Boolean mainActivity) {
         Bundle args = new Bundle();
         args.putInt("KEY_POSITION", position);
         args.putSerializable("KEY_WORKOUT", workouts);
+        args.putBoolean("KEY_MAIN_ACTIVITY", mainActivity);
 
         WorkoutFragment fragment = new WorkoutFragment();
         fragment.setArguments(args);
@@ -45,27 +75,112 @@ public class WorkoutFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        int position = getArguments().getInt("KEY_POSITION") + 1;
+        position = getArguments().getInt("KEY_POSITION") + 1;
         currentWorkout = (Workouts) getArguments().getSerializable("KEY_WORKOUT");
+        fromMainActivity = getArguments().getBoolean("KEY_MAIN_ACTIVITY");
+
         exercises = currentWorkout.getExercises();
         Exercise[] data = new Exercise[exercises.size()];
         data = exercises.toArray(data);
 
-        Log.v(LOG_TAG, "This is exercise : " + data.toString());
-
         View rootView = inflater.inflate(R.layout.fragment_workout, container, false);
 
-        TextView workoutDayTextView = (TextView) rootView.findViewById(R.id.workout_day_textview);
-        mListView = (ListView) rootView.findViewById(R.id.workout_listview);
-
-        workoutDayTextView.setText("Day " + position);
+        initializeScreen(rootView);
 
         ExerciseListAdapter adapter = new ExerciseListAdapter(getActivity(), R.layout.single_exercise_item, data);
 
         mListView.setAdapter(adapter);
+        if (fromMainActivity) {
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Fragment fragment = new TrackerFragment().newInstance(exercises.get(position).getExerciseName());
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager()
+                            .beginTransaction().replace(R.id.main_container, fragment);
+                    fragmentTransaction.addToBackStack(LOG_TAG);
+                    fragmentTransaction.commit();
+                }
+            });
+        }
 
         return rootView;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    private void initializeScreen(View rootView){
+        TextView workoutDayTextView = (TextView) rootView.findViewById(R.id.workout_day_textview);
+        mListView = (ListView) rootView.findViewById(R.id.workout_listview);
+        mCompleteButton = (Button) rootView.findViewById(R.id.workout_complete_button);
+
+        mCompleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCompleteButtonClicked();
+            }
+        });
+        workoutDayTextView.setText("Day " + position);
+    }
+
+    public void onCompleteButtonClicked() {
+
+        int workout_week = Utils.getSharedPreferenceWorkoutWeek(getApplicationContext());
+        int workout_day = Utils.getSharedPreferenceWorkoutDay(getApplicationContext());
+        int plan_size = Utils.getSharedPreferencePlanSize(getApplicationContext());
+
+        Cursor cursor = getActivity().getContentResolver().query(MyContract.UserHistoryEntry.CONTENT_URI, null,
+                MyContract.UserHistoryEntry.COLUMN_WORKOUT_WEEK + " = " + workout_week + " AND "
+                        + MyContract.UserHistoryEntry.COLUMN_WORKOUT_DAY + " = " + workout_day,
+                null, null);
+
+        ArrayList<OneSet> sets = new ArrayList<>();
+
+        while (cursor != null && cursor.moveToNext()){
+            OneSet oneSet = new OneSet();
+            String weight = cursor.getString(cursor.getColumnIndexOrThrow(MyContract.UserHistoryEntry.COLUMN_WEIGHT));
+            String reps = cursor.getString(cursor.getColumnIndexOrThrow(MyContract.UserHistoryEntry.COLUMN_REPS));
+            String exerciseName = cursor.getString(cursor.getColumnIndexOrThrow(MyContract.UserHistoryEntry.COLUMN_EXERCISE_NAME));
+            oneSet.setExerciseName(exerciseName);
+            oneSet.setWeight(weight);
+            oneSet.setReps(reps);
+            sets.add(oneSet);
+        }
+
+        cursor.close();
+
+        Map<String, Object> workoutHistory = new HashMap<>();
+        workoutHistory.put("1", sets);
+
+        String uid = Utils.encodeEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+
+        Firebase historyRep = new Firebase(Constants.FIREBASE_URL_USER).child(uid)
+                .child(Constants.FIREBASE_LOCATION_HISTORY);
+        historyRep.setValue(workoutHistory);
+
+        Toast.makeText(getApplicationContext(), R.string.toast_message_completed_todays_workout, Toast.LENGTH_SHORT).show();
+
+        Map<String, Object> map = new HashMap<>();
+
+        Firebase userActivityRef = new Firebase(Constants.FIREBASE_URL_USER).child(uid).child(Constants.FIREBASE_LOCATION_USER_ACTIVITY);
+
+        if (workout_day == plan_size - 1) {
+            // current workout day is the last day in the current plan
+            // go back to day 1 & increase current workout week by 1.
+            map.put("current_workout_day", 0);
+            map.put("current_workout_week", workout_week + 1);
+
+            Utils.saveSharedPreferenceWorkoutDay(getApplicationContext(), 0);
+            Utils.saveSharedPreferenceWorkoutWeek(getApplicationContext(), workout_week + 1);
+        } else {
+            map.put("current_workout_day", workout_day + 1);
+            Utils.saveSharedPreferenceWorkoutDay(getApplicationContext(), workout_day + 1);
+        }
+        userActivityRef.updateChildren(map);
+    }
+
 
 
     /**
@@ -104,7 +219,26 @@ public class WorkoutFragment extends android.support.v4.app.Fragment {
             tvTitle.setText(title);
             tvSetAndRep.setText(sets + " sets x " + reps + " reps");
 
+            // if there is data of the current exercise on same workout week and day, change the identifier color
+            int workout_week = Utils.getSharedPreferenceWorkoutWeek(getApplicationContext());
+            int workout_day = Utils.getSharedPreferenceWorkoutDay(getApplicationContext());
+            String selection = MyContract.UserHistoryEntry.COLUMN_EXERCISE_NAME + " =?"
+                    + " AND " + MyContract.UserHistoryEntry.COLUMN_WORKOUT_WEEK + " = " + workout_week
+                    + " AND " + MyContract.UserHistoryEntry.COLUMN_WORKOUT_DAY + " = " + workout_day;
+            String[] selectionArg = new String[]{title};
+
+            Cursor cursor = getContext().getContentResolver().query(MyContract.UserHistoryEntry.CONTENT_URI, null,
+                    selection, selectionArg, null);
+
+            if (cursor != null && cursor.moveToFirst()){
+                View completeMarkerView = convertView.findViewById(R.id.single_exercise_complete_marker);
+                completeMarkerView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                cursor.close();
+            }
+
             return convertView;
         }
     }
+
+
 }

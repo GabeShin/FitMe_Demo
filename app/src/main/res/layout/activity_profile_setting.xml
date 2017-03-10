@@ -1,325 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
         <android.support.design.widget.AppBarLayout
-            android:id="@+id/profile_activity_app_bar"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@color/colorPrimary"
-            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark">
-            <RelativeLayout
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/profile_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <!--This Imageview will be inflated with fitme Logo-->
-                <ImageView
-                    android:id="@+id/profile_appbar_logo"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="15dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:src="@drawable/logo"/>
-
-                <ImageView
-                    android:id="@+id/profile_activity_profile_picture"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_account_circle_black_24dp"/>
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/profile_activity_tool_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"/>
-            </RelativeLayout>
+                android:layout_height="?attr/actionBarSize"
+                android:elevation="4dp"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
         </android.support.design.widget.AppBarLayout>
 
-        <!--Basic User Informations-->
-        <android.support.v7.widget.CardView
-            android:id="@+id/basic_information"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_below="@id/profile_activity_app_bar">
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:alignmentMode="alignMargins"
-                android:columnCount="2"
-                android:background="@color/colorPrimary">
+            android:background="@android:color/darker_gray"
+            android:padding="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+            <ImageView
+                android:id="@+id/profile_activity_profile_picture"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_account_circle_black_24dp"/>
+        </LinearLayout>
 
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Name"/>
-                <TextView
-                    android:id="@+id/profile_activity_name"
-                    style="@style/gridlayout_right_elements"
-                    android:hint="@string/profile_hint_name"/>
-                <View style="@style/gridlayout_spaces" />
-
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Birthday"/>
-                <TextView
-                    android:id="@+id/profile_activity_birthday"
-                    style="@style/gridlayout_right_elements"
-                    android:hint="@string/profile_hint_birthday"/>
-                <View style="@style/gridlayout_spaces" />
-
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Gender"/>
-                <TextView
-                    android:id="@+id/profile_activity_gender"
-                    style="@style/gridlayout_right_elements"
-                    android:hint="@string/profile_hint_gender"/>
-                <View style="@style/gridlayout_spaces" />
-
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Goal"/>
-                <Spinner
-                    android:id="@+id/spinner_goal"
-                    style="@style/gridlayout_right_elements"
-                    android:spinnerMode="dialog"
-                    android:prompt="@string/profile_hint_goal"
-                    android:entries="@array/exercise_goal"/>
-                <View style="@style/gridlayout_spaces" />
-            </GridLayout>
-        </android.support.v7.widget.CardView>
-
-        <!--User Contact Information-->
-        <android.support.v7.widget.CardView
-            android:id="@+id/contact_information"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_below="@id/basic_information">
-            <GridLayout
+            android:orientation="vertical"
+            android:layout_margin="12dp">
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alignmentMode="alignMargins"
-                android:columnCount="2"
-                android:background="@color/colorPrimary">
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Nickname"/>
-                <EditText
-                    android:id="@+id/et_nickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:inputType="text"
-                    style="@style/gridlayout_right_elements"
-                    android:textColor="@color/colorAccent"
-                    android:hint="@string/profile_hint_password"/>
-                <View style="@style/gridlayout_spaces" />
+                app:cardCornerRadius="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        style="@style/gridlayout_left_elements"
+                        android:text="@string/email"/>
+                    <TextView
+                        android:id="@+id/profile_activity_email"
+                        style="@style/gridlayout_right_elements"
+                        android:hint="@string/profile_hint_email"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Email"/>
-                <TextView
-                    android:id="@+id/profile_activity_email"
-                    style="@style/gridlayout_right_elements"
-                    android:hint="@string/profile_hint_email"/>
-                <View style="@style/gridlayout_spaces" />
-
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Phone Number"/>
-                <TextView
-                    style="@style/gridlayout_right_elements"
-                    android:hint="@string/profile_hint_phone"/>
-                <View style="@style/gridlayout_spaces" />
-            </GridLayout>
-        </android.support.v7.widget.CardView>
-
-        <!--User Body Information-->
-        <android.support.v7.widget.CardView
-            android:id="@+id/body_information"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_below="@id/contact_information">
-            <GridLayout
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alignmentMode="alignMargins"
-                android:columnCount="2"
-                android:background="@color/colorPrimary">
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Height"/>
-                <EditText
-                    android:id="@+id/et_height"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:inputType="number"
-                    style="@style/gridlayout_right_elements"
-                    android:textColor="@color/colorAccent"
-                    android:hint="@string/profile_hint_height"/>
-                <View style="@style/gridlayout_spaces" />
+                app:cardCornerRadius="10dp"
+                android:layout_marginTop="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        style="@style/gridlayout_left_elements"
+                        android:text="@string/name"/>
+                    <TextView
+                        android:id="@+id/profile_activity_name"
+                        style="@style/gridlayout_right_elements"
+                        android:hint="@string/profile_hint_name"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Weight"/>
-                <EditText
-                    android:id="@+id/et_weight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:inputType="number"
-                    style="@style/gridlayout_right_elements"
-                    android:textColor="@color/colorAccent"
-                    android:hint="@string/profile_hint_weight"/>
-                <View style="@style/gridlayout_spaces" />
-
-                <TextView
-                    style="@style/gridlayout_left_elements"
-                    android:text="Workout Experience"/>
-                <Spinner
-                    android:id="@+id/spinner_experience"
-                    android:spinnerMode="dialog"
-                    style="@style/gridlayout_right_elements"
-                    android:prompt = "@string/profile_hint_experience"
-                    android:entries="@array/exercise_experience"/>
-                <View style="@style/gridlayout_spaces" />
-            </GridLayout>
-        </android.support.v7.widget.CardView>
-
-        <!--User Schedule Information-->
-        <android.support.v7.widget.CardView
-            android:id="@+id/schedule_information"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_below="@id/body_information">
-            <GridLayout
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alignmentMode="alignMargins"
-                android:columnCount="2"
-                android:background="@color/colorPrimary">
-                <TextView
-                    style="@style/gridlayout_long_questions"
-                    android:text="How often do you workout in a week?"/>
-                <EditText
-                    android:id="@+id/et_question_1"
+                app:cardCornerRadius="10dp"
+                android:layout_marginTop="12dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    style="@style/gridlayout_long_answers"
-                    android:textColor="@color/colorAccent"
-                    android:inputType="number"
-                    android:hint="@string/profile_hint_question_1"/>
-                <View style="@style/gridlayout_spaces" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        style="@style/gridlayout_left_elements"
+                        android:text="@string/birthyear"/>
+                    <TextView
+                        android:id="@+id/profile_activity_birthday"
+                        style="@style/gridlayout_right_elements"
+                        android:hint="@string/profile_hint_birthday"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-                <TextView
-                    style="@style/gridlayout_long_questions"
-                    android:text="What is your typical breakfast?"/>
-                <EditText
-                    android:id="@+id/et_question_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:inputType="text"
-                    style="@style/gridlayout_long_answers"
-                    android:hint="@string/profile_hint_question_2"/>
-                <View style="@style/gridlayout_spaces" />
-
-                <TextView
-                    style="@style/gridlayout_long_questions"
-                    android:text="What is your typical lunch?"/>
-                <EditText
-                    android:id="@+id/et_question_3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:inputType="text"
-                    style="@style/gridlayout_long_answers"
-                    android:hint="@string/profile_hint_question_3"/>
-                <View style="@style/gridlayout_spaces" />
-
-                <TextView
-                    style="@style/gridlayout_long_questions"
-                    android:text="What is your typical dinner?"/>
-                <EditText
-                    android:id="@+id/et_question_4"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:inputType="text"
-                    style="@style/gridlayout_long_answers"
-                    android:hint="@string/profile_hint_question_4"/>
-                <View style="@style/gridlayout_spaces" />
-
-                <TextView
-                    style="@style/gridlayout_long_questions"
-                    android:text="How often do you drink alcohol in a week?"/>
-                <EditText
-                    android:id="@+id/et_question_5"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:inputType="number"
-                    style="@style/gridlayout_long_answers"
-                    android:hint="@string/profile_hint_question_5"/>
-                <View style="@style/gridlayout_spaces" />
-
-                <TextView
-                    style="@style/gridlayout_long_questions"
-                    android:text="How often do you snack?"/>
-                <EditText
-                    android:id="@+id/et_question_6"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:inputType="number"
-                    style="@style/gridlayout_long_answers"
-                    android:hint="@string/profile_hint_question_6"/>
-                <View style="@style/gridlayout_spaces" />
-            </GridLayout>
-        </android.support.v7.widget.CardView>
-
-        <!--User Schedule Information-->
-        <android.support.v7.widget.CardView
-            android:id="@+id/special_information"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
-            android:layout_below="@id/schedule_information">
-            <GridLayout
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alignmentMode="alignMargins"
-                android:columnCount="2"
-                android:background="@color/colorPrimary">
-                <TextView
-                    style="@style/gridlayout_long_questions"
-                    android:text="Any important information trainer should know about"/>
-                <EditText
-                    android:id="@+id/et_special_info"
+                app:cardCornerRadius="10dp"
+                android:layout_marginTop="12dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:inputType="textMultiLine"
-                    style="@style/gridlayout_long_answers"
-                    android:textColor="@color/colorAccent"
-                    android:hint="@string/profile_hint_question_special"/>
-                <View style="@style/gridlayout_spaces" />
-            </GridLayout>
-        </android.support.v7.widget.CardView>
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        style="@style/gridlayout_left_elements"
+                        android:text="@string/gender"/>
+                    <TextView
+                        android:id="@+id/profile_activity_gender"
+                        style="@style/gridlayout_right_elements"
+                        android:hint="@string/profile_hint_gender"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <android.support.v7.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="10dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginEnd="6dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/gridlayout_left_elements"
+                            android:layout_weight="1"
+                            android:text="@string/height"/>
+                        <EditText
+                            style="@style/gridlayout_right_elements"
+                            android:id="@+id/profile_activity_height"
+                            android:layout_weight="1"
+                            android:inputType="number"
+                            android:hint="---"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="12dp"
+                            android:layout_marginEnd="12dp"
+                            android:text="cm"/>
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="10dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginLeft="6dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/gridlayout_left_elements"
+                            android:layout_weight="1"
+                            android:text="@string/weight"/>
+                        <EditText
+                            style="@style/gridlayout_right_elements"
+                            android:id="@+id/profile_activity_weight"
+                            android:layout_weight="1"
+                            android:inputType="number"
+                            android:hint="---"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="12dp"
+                            android:layout_marginEnd="12dp"
+                            android:text="kg"/>
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                android:layout_marginBottom="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        style="@style/gridlayout_left_elements"
+                        android:layout_weight="1"
+                        android:text="@string/goal"/>
+                    <Spinner
+                        android:id="@+id/spinner_goal"
+                        style="@style/gridlayout_right_elements"
+                        android:layout_weight="1"
+                        android:spinnerMode="dialog"
+                        android:prompt="@string/profile_hint_goal"
+                        android:entries="@array/exercise_goal"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+    </LinearLayout>
 </ScrollView>
