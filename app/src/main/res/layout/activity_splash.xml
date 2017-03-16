@@ -13,6 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:contentDescription="@string/content_description_logo"
         android:layout_marginTop="130dp" />
 
     <ProgressBar
@@ -23,5 +24,7 @@
         android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/splash_logo" />
+
+
 
 </RelativeLayout>

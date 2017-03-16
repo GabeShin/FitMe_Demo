@@ -1,6 +1,9 @@
 package gabe.zabi.fitme_demo.ui.detailPlanActivity;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,15 +21,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,15 +36,17 @@ import gabe.zabi.fitme_demo.R;
 import gabe.zabi.fitme_demo.data.MyContract;
 import gabe.zabi.fitme_demo.model.Exercise;
 import gabe.zabi.fitme_demo.model.OneSet;
-import gabe.zabi.fitme_demo.model.Plan;
-import gabe.zabi.fitme_demo.model.UserActivity;
+import gabe.zabi.fitme_demo.model.PlanOverview;
 import gabe.zabi.fitme_demo.model.Workouts;
+import gabe.zabi.fitme_demo.services.UpdateUserActivityService;
+import gabe.zabi.fitme_demo.ui.mainActivity.ProgressFragment;
 import gabe.zabi.fitme_demo.ui.mainActivity.TrackerFragment;
 import gabe.zabi.fitme_demo.utils.Constants;
 import gabe.zabi.fitme_demo.utils.Utils;
+import gabe.zabi.fitme_demo.widget.TodayWidgetProvider;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
-import static com.fasterxml.jackson.core.JsonParser.NumberType.INT;
+import static gabe.zabi.fitme_demo.R.id.widget;
 
 /**
  * Created by Gabe on 2017-02-24.
@@ -122,7 +126,7 @@ public class WorkoutFragment extends android.support.v4.app.Fragment {
                 onCompleteButtonClicked();
             }
         });
-        workoutDayTextView.setText("Day " + position);
+        workoutDayTextView.setText(getResources().getString(R.string.day_format_resource, position));
     }
 
     public void onCompleteButtonClicked() {
@@ -156,29 +160,47 @@ public class WorkoutFragment extends android.support.v4.app.Fragment {
 
         String uid = Utils.encodeEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
-        Firebase historyRep = new Firebase(Constants.FIREBASE_URL_USER).child(uid)
-                .child(Constants.FIREBASE_LOCATION_HISTORY);
-        historyRep.setValue(workoutHistory);
+        Firebase historyRep = new Firebase(Constants.FIREBASE_URL_USER).child(uid).child(Constants.FIREBASE_LOCATION_HISTORY);
+        historyRep.push().setValue(sets);
+
+        // schedule a job to update user history
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(getApplicationContext()));
+        Job job = dispatcher.newJobBuilder()
+                .setService(UpdateUserActivityService.class)
+                .setTag("update_user_activity_tag")
+                // start after about 5 to 6 hours
+                .setTrigger(Trigger.executionWindow(60*60*5, 60*60*6))
+                // set arguments
+                .build();
+        dispatcher.mustSchedule(job);
+
+//        Map<String, Object> map = new HashMap<>();
+//        Firebase userActivityRef = new Firebase(Constants.FIREBASE_URL_USER).child(uid).child(Constants.FIREBASE_LOCATION_USER_ACTIVITY);
+//        if (workout_day == plan_size - 1) {
+//            // current workout day is the last day in the current plan
+//            // go back to day 1 & increase current workout week by 1.
+//            map.put("current_workout_day", 0);
+//            map.put("current_workout_week", workout_week + 1);
+//
+//            Utils.saveSharedPreferenceWorkoutDay(getApplicationContext(), 0);
+//            Utils.saveSharedPreferenceWorkoutWeek(getApplicationContext(), workout_week + 1);
+//        } else {
+//            map.put("current_workout_day", workout_day + 1);
+//            Utils.saveSharedPreferenceWorkoutDay(getApplicationContext(), workout_day + 1);
+//        }
+//        userActivityRef.updateChildren(map);
 
         Toast.makeText(getApplicationContext(), R.string.toast_message_completed_todays_workout, Toast.LENGTH_SHORT).show();
 
-        Map<String, Object> map = new HashMap<>();
+        // completion status is true now.
+        Utils.saveSharedPreferenceCompletionStatus(getApplicationContext(), true);
 
-        Firebase userActivityRef = new Firebase(Constants.FIREBASE_URL_USER).child(uid).child(Constants.FIREBASE_LOCATION_USER_ACTIVITY);
+        // start ProgressFragment
+        ProgressFragment fragment = new ProgressFragment();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.commit();
 
-        if (workout_day == plan_size - 1) {
-            // current workout day is the last day in the current plan
-            // go back to day 1 & increase current workout week by 1.
-            map.put("current_workout_day", 0);
-            map.put("current_workout_week", workout_week + 1);
-
-            Utils.saveSharedPreferenceWorkoutDay(getApplicationContext(), 0);
-            Utils.saveSharedPreferenceWorkoutWeek(getApplicationContext(), workout_week + 1);
-        } else {
-            map.put("current_workout_day", workout_day + 1);
-            Utils.saveSharedPreferenceWorkoutDay(getApplicationContext(), workout_day + 1);
-        }
-        userActivityRef.updateChildren(map);
     }
 
 

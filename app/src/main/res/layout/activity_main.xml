@@ -45,6 +45,7 @@
                 android:visibility="gone"
                 android:layout_centerInParent="true"
                 android:background="@android:color/darker_gray"
+                android:contentDescription="@string/content_description_add_a_plan"
                 android:onClick="onAddPlanClicked"/>
         </RelativeLayout>
 

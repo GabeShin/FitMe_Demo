@@ -79,15 +79,14 @@
     <string name="profile_hint_weight">Your Weight</string>
     <string name="profile_hint_experience">Select Your Experience</string>
     <string name="profile_hint_gender">Choose Your Gender</string>
-    <string name="profile_hint_question_1">0</string>
-    <string name="profile_hint_question_2">ex. 4 eggs and half an apple</string>
-    <string name="profile_hint_question_3">ex. sandwich place near work</string>
-    <string name="profile_hint_question_4">ex. chicken breast and salad, potato</string>
-    <string name="profile_hint_question_5">2</string>
-    <string name="profile_hint_question_6">2</string>
-    <string name="profile_hint_question_special">ex. are you pregnant? do you suffer from any chronicle diseases? are you regularly feeling pain in your body?</string>
 
     <!--Strings For Layouts-->
+    <string name="main_progress">Progress</string>
+
+    <string name="progress_percentage">%1$d%% Completed</string>
+    <string name="progress_to_go">%1$d more workouts to go</string>
+
+
     <string name="choose_workout">Choose This Workout</string>
     <string name="email">Email</string>
     <string name="name">Name</string>
@@ -112,6 +111,8 @@
     <string name="save">Save</string>
     <string name="clear">Clear</string>
 
+    <string name="day_format_resource">Day %1$d</string>
+
     <string name="complete_this_workout">Complete This Workout</string>
 
     <string name="no_history">no history</string>
@@ -128,5 +129,17 @@
     <string name="toast_message_auth_failed">Authentication Failed</string>
     <string name="toast_message_connectivity_issue">Please check your network connectivity</string>
     <string name="toast_message_invalid_email_password">Please check your email and password</string>
+
+    <!--Content Description-->
+    <string name="content_description_logo">Logo</string>
+    <string name="content_description_profile_picture">Profile Picture</string>
+    <string name="content_description_open_tracker">Open Tracker</string>
+    <string name="content_description_add_a_plan">Add a Plan</string>
+
+    <!--Widgets-->
+    <string name="title_widget_today">Today Workout</string>
+    <string name="current_workout">Current Workout</string>
+    <string name="workout_empty">No Workout</string>
+
 
 </resources>

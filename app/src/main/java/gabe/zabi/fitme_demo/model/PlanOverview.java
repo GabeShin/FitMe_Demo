@@ -1,16 +1,19 @@
 package gabe.zabi.fitme_demo.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Gabe on 2017-02-22.
  */
 
-public class PlanOverview {
+public class PlanOverview implements Serializable {
     private String backdrop;
     private String goal;
     private String target;
     private String title;
     private String author;
     private String difficulty;
+    private int weeks;
 
     public PlanOverview() {
     }
@@ -116,5 +119,13 @@ public class PlanOverview {
 
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public int getWeeks() {
+        return weeks;
+    }
+
+    public void setWeeks(int weeks) {
+        this.weeks = weeks;
     }
 }

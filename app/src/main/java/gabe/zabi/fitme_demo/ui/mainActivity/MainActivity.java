@@ -1,12 +1,16 @@
 package gabe.zabi.fitme_demo.ui.mainActivity;
 
 import android.app.AlertDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,15 +40,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import gabe.zabi.fitme_demo.data.AndroidDatabaseManager;
-import gabe.zabi.fitme_demo.data.MyContract;
-import gabe.zabi.fitme_demo.model.OneSet;
 import gabe.zabi.fitme_demo.model.Plan;
 import gabe.zabi.fitme_demo.model.UserActivity;
 import gabe.zabi.fitme_demo.model.Workouts;
@@ -56,9 +52,8 @@ import gabe.zabi.fitme_demo.utils.Constants;
 import gabe.zabi.fitme_demo.ui.BaseActivity;
 import gabe.zabi.fitme_demo.R;
 import gabe.zabi.fitme_demo.utils.Utils;
+import gabe.zabi.fitme_demo.widget.TodayWidgetProvider;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -93,6 +88,14 @@ public class MainActivity extends BaseActivity {
          * Link layout elements from XML and setup the toolbar
          */
         initializeScreen();
+
+        if (Utils.getSharedPreferenceCompletionStatus(getApplicationContext())) {
+            // true -> today's workout is completed
+            ProgressFragment fragment = new ProgressFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_container, fragment);
+            transaction.commit();
+        }
     }
 
     public void initializeScreen() {
@@ -138,18 +141,14 @@ public class MainActivity extends BaseActivity {
                         startActivity(search_intent);
                         break;
                     case 3:
-//                        /**
-//                         * Start android database manager activity
-//                         * Needs to be replaced later
-//                         */
-//                        Intent dbmanager = new Intent(MainActivity.this, AndroidDatabaseManager.class);
-//                        startActivity(dbmanager);
-
                         // Logout
                         FirebaseAuth.getInstance().signOut();
 
+                        // Set trigger for new log-in. (At BaseActivity)
+                        Utils.clearAllSharedPreferences(getApplicationContext());
+
                         /*
-                         * Move user to LoginActivity and remove the backstack
+                         * Move user to LoginActivity and remove the back stack
                          */
                         Intent i = new Intent(MainActivity.this, LoginActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -192,33 +191,37 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @Override
-    public void onBackPressed() {
-        int count = getSupportFragmentManager().getBackStackEntryCount();
+    /*
+     * Not needed
+     */
 
-        if (count == 0) {
-            new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Closing App")
-                    .setMessage("Are you sure you want to close the app?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Intent.ACTION_MAIN);
-                            intent.addCategory(Intent.CATEGORY_HOME);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            finish();
-                            System.exit(0);
-                        }
-
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
-        } else {
-            getSupportFragmentManager().popBackStack();
-        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        int count = getSupportFragmentManager().getBackStackEntryCount();
+//
+//        if (count == 0) {
+//            new AlertDialog.Builder(this)
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .setTitle("Closing App")
+//                    .setMessage("Are you sure you want to close the app?")
+//                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            Intent intent = new Intent(Intent.ACTION_MAIN);
+//                            intent.addCategory(Intent.CATEGORY_HOME);
+//                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            startActivity(intent);
+//                            finish();
+//                            System.exit(0);
+//                        }
+//
+//                    })
+//                    .setNegativeButton("No", null)
+//                    .show();
+//        } else {
+//            getSupportFragmentManager().popBackStack();
+//        }
+//    }
 
     @Override
     protected void onStart() {
@@ -252,11 +255,19 @@ public class MainActivity extends BaseActivity {
                             currentWorkoutDay = Utils.getSharedPreferenceWorkoutDay(getApplicationContext());
 
                             if (workouts != null) {
-                                WorkoutFragment fragment = new WorkoutFragment()
-                                        .newInstance(userActivity.getCurrent_workout_day(), workouts.get(currentWorkoutDay), true);
+                                WorkoutFragment fragment = new WorkoutFragment().newInstance(userActivity.getCurrent_workout_day(),
+                                                workouts.get(currentWorkoutDay), true);
                                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                                 transaction.replace(R.id.main_container, fragment);
                                 transaction.commit();
+
+                                // Update Widget Data
+                                Intent intent = new Intent(getApplicationContext(), TodayWidgetProvider.class);
+                                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                                int[] ids = AppWidgetManager.getInstance(getApplicationContext())
+                                        .getAppWidgetIds(new ComponentName(getApplicationContext(), TodayWidgetProvider.class));
+                                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+                                sendBroadcast(intent);
                             }
                         }
 
@@ -287,8 +298,14 @@ public class MainActivity extends BaseActivity {
         /**
          * Perform fragment transaction.
          */
-        mUserActivityRef.addValueEventListener(activityListener);
+        if (!Utils.getSharedPreferenceCompletionStatus(getApplicationContext())) {
+            // false -> today's workout is not completed
+            mUserActivityRef.addValueEventListener(activityListener);
+            Log.v(LOG_TAG, "at on postresume - false");
+        } else {
+            // true -> today's workout is completed
+            Log.v(LOG_TAG, "at on postresume - true");
+        }
     }
-
 
 }

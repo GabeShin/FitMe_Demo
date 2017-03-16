@@ -47,6 +47,31 @@ public class Utils {
      * Save SharedPreference Plan parameters
      */
 
+    public static void saveSharedPreferenceReturningUser(Context context, boolean returning){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(Constants.KEY_RETURNING_USER, returning);
+        editor.apply();
+    }
+
+    public static boolean getSharedPreferenceReturningUser(Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(Constants.KEY_RETURNING_USER, false);
+    }
+
+    public static void saveSharedPreferenceUserUid(Context context, String uid){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(Constants.KEY_USER_UID, uid);
+        editor.apply();
+    }
+
+    public static String getSharedPreferenceUserUid(Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getString(Constants.KEY_USER_UID, null);
+    }
+
+
     public static void saveSharedPreferencePlanUid(Context context, String uid){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
@@ -83,6 +108,18 @@ public class Utils {
         return sp.getInt(Constants.KEY_WORKOUT_DAY, 1);
     }
 
+    public static int getSharedPreferenceNumberOfWeeks(Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getInt(Constants.KEY_NUMBER_OF_WEEKS, 4);
+    }
+
+    public static void saveSharedPreferenceNumberOfWeeks(Context context, int size){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(Constants.KEY_NUMBER_OF_WEEKS, size);
+        editor.apply();
+    }
+
     public static int getSharedPreferencePlanSize(Context context){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getInt(Constants.KEY_PLAN_SIZE, 1);
@@ -94,6 +131,26 @@ public class Utils {
         editor.putInt(Constants.KEY_PLAN_SIZE, size);
         editor.apply();
     }
+
+    public static boolean getSharedPreferenceCompletionStatus(Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(Constants.KEY_COMPLETION_STATUS, false);
+    }
+
+    public static void saveSharedPreferenceCompletionStatus(Context context, boolean completed){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(Constants.KEY_COMPLETION_STATUS, completed);
+        editor.apply();
+    }
+
+    public static void clearAllSharedPreferences(Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.clear().commit();
+    }
+
+
     /**
      * Methods for troll-checking user inputs.
      */

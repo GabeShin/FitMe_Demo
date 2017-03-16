@@ -22,11 +22,14 @@ public class Constants {
     /**
      * Constants for SharedPreference Keys
      */
-    public static String KEY_CREATED_UID = "CREATED_UID_KEY";
+    public static String KEY_RETURNING_USER = "RETURNING_USER_KEY";
+    public static String KEY_USER_UID = "CREATED_USER_UID_KEY";
     public static String KEY_WORKOUT_UID = "WORKOUT_UID_KEY";
     public static String KEY_WORKOUT_WEEK = "WORKOUT_WEEK_KEY";
     public static String KEY_WORKOUT_DAY = "WORKOUT_DAY_KEY";
     public static String KEY_PLAN_SIZE = "PLAN_SIZE_KEY";
+    public static String KEY_NUMBER_OF_WEEKS = "NUMBER_OF_WEEKS_KEY";
+    public static String KEY_COMPLETION_STATUS = "COMPLETION_STATUS_KEY";
 
     public static final String KEY_VALUE_EXERCISE_NAME = "exercise_name";
     public static final String KEY_VALUE_DATE_OF = "date_if";

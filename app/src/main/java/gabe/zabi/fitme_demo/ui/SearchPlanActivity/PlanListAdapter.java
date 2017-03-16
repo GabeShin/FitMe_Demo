@@ -42,7 +42,7 @@ public class PlanListAdapter extends FirebaseListAdapter<Plan> {
         TextView listAuthor = (TextView) v.findViewById(R.id.plan_item_author);
         TextView listTarget = (TextView) v.findViewById(R.id.plan_item_target);
 
-        listTitle.setText(model.getOverview().getTitle());
+        listTitle.setText(model.getOverview().getTitle() + " (" + model.getOverview().getWeeks() + " weeks)");
         listGoal.setText(model.getOverview().getGoal());
         listDifficulty.setText(model.getOverview().getDifficulty());
         listAuthor.setText(model.getOverview().getAuthor());

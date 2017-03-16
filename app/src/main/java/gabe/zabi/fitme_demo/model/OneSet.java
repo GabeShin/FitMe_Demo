@@ -1,10 +1,12 @@
 package gabe.zabi.fitme_demo.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Gabe on 2017-03-07.
  */
 
-public class OneSet {
+public class OneSet implements Serializable{
     private String exerciseName;
     private String weight;
     private String reps;

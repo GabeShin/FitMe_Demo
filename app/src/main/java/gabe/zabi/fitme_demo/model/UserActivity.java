@@ -10,6 +10,7 @@ public class UserActivity {
     private String current_plan_uid;
     private int current_workout_day;
     private int current_workout_week;
+    private int workout_length_in_weeks;
 
     public UserActivity() {
     }
@@ -36,5 +37,13 @@ public class UserActivity {
 
     public void setCurrent_workout_week(int current_workout_week) {
         this.current_workout_week = current_workout_week;
+    }
+
+    public int getWorkout_length_in_weeks() {
+        return workout_length_in_weeks;
+    }
+
+    public void setWorkout_length_in_weeks(int workout_length_in_weeks) {
+        this.workout_length_in_weeks = workout_length_in_weeks;
     }
 }

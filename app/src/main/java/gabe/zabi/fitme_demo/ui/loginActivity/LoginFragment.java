@@ -43,14 +43,12 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.Arrays;
 
 import gabe.zabi.fitme_demo.R;
-import gabe.zabi.fitme_demo.model.User;
 import gabe.zabi.fitme_demo.ui.mainActivity.MainActivity;
 import gabe.zabi.fitme_demo.utils.Constants;
 import gabe.zabi.fitme_demo.utils.Utils;

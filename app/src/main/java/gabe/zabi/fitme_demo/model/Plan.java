@@ -1,12 +1,13 @@
 package gabe.zabi.fitme_demo.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Gabe on 2017-02-22.
  */
 
-public class Plan {
+public class Plan implements Serializable {
     private PlanOverview overview;
     private ArrayList<Workouts> workouts;
 

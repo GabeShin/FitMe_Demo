@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:initialKeyguardLayout="@layout/widget_today_workout"
+    android:initialLayout="@layout/widget_today_workout"
+    android:minHeight="@dimen/widget_today_default_height"
+    android:minWidth="@dimen/widget_today_default_width"
+    android:minResizeHeight="@dimen/widget_today_min_resize_height"
+    android:minResizeWidth="@dimen/widget_today_min_resize_width"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen|keyguard"
+    tools:ignore="UnusedAttribute" />
+
+    <!--android:previewImage="@drawable/widget_preview_detail"-->
