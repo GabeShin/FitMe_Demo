@@ -96,16 +96,16 @@ public class ProfileSettingActivity extends BaseActivity {
         switch (item.getItemId()){
             case R.id.action_save_profile:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Save Profile")
-                        .setMessage("Do you want to save the profile?")
-                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                builder.setTitle(getString(R.string.save_profile))
+                        .setMessage(getString(R.string.do_you_want_to_save))
+                        .setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         getAllProfileDataFromApp();
                         updateUserProfileToFirebase();
                     }
                 })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -149,8 +149,8 @@ public class ProfileSettingActivity extends BaseActivity {
         mEditTextHeight.setText(userProfile.getHeight());
         mEditTextWeight.setText(userProfile.getWeight());
 
-        if (userProfile.getGender() == 0) mTextViewGender.setText("Male");
-        else mTextViewGender.setText("Female");
+        if (userProfile.getGender() == 0) mTextViewGender.setText(getString(R.string.gender_male));
+        else mTextViewGender.setText(getString(R.string.gender_female));
 
         mSpinnerGoal.setSelection(userProfile.getGoal());
     }

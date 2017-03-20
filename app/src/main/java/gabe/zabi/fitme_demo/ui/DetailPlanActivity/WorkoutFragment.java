@@ -239,7 +239,7 @@ public class WorkoutFragment extends android.support.v4.app.Fragment {
             String sets = currentExercise.getNumberOfSets();
 
             tvTitle.setText(title);
-            tvSetAndRep.setText(sets + " sets x " + reps + " reps");
+            tvSetAndRep.setText(getString(R.string.rep_x_weight, reps, sets));
 
             // if there is data of the current exercise on same workout week and day, change the identifier color
             int workout_week = Utils.getSharedPreferenceWorkoutWeek(getApplicationContext());

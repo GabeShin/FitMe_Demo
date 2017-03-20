@@ -109,7 +109,15 @@
     <string name="tracker_weight">WEIGHT (kgs)</string>
     <string name="tracker_reps">REPS</string>
     <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
     <string name="clear">Clear</string>
+
+    <string name="save_profile">Save Profile</string>
+    <string name="do_you_want_to_save">Do you want to save profile?</string>
+
+    <string name="workout_title_format">%1$s (%2$s Weeks)</string>
+
+    <string name="rep_x_weight">%1$s sets x %2$s reps</string>
 
     <string name="day_format_resource">Day %1$d</string>
 
